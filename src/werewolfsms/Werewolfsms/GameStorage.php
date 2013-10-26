@@ -37,7 +37,7 @@ class GameStorage {
             foreach ($allPlayers as $aPerson) {
                 $aPersonObject = new Person($this->clockworkObject,$currentGame);
                 $aPersonObject->fromJSON($aPerson);
-                $this->allPeopleArray[] = $aPerson;
+                $this->allPeopleArray[$aPerson->getMobileNumber] = $aPerson;
             }
             return $this->allPeopleArray;
         }
