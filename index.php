@@ -7,25 +7,44 @@ use Werewolfsms as W;
 
 $app = new Slim\Slim;
 
-$app->get('/register', function() use ($app) {
-    return $app->render('index.php', array(
-        'title' => 'This is the title'
+$app->get('/join-game', function() use ($app) {
+    return $app->render('register', array(
+        'title' => 'Join Game '
     ));
 });
 
-$app->post('/register', function() use ($app) {
+$app->post('/join-game', function() use ($app) {
+
     var_dump($_POST);
+
 });
+
+$app->get('/', function() use ($app) {
+
+    return $app->render('index.php',array(
+        'title'=>'Were Wolve SMS'
+    ));
+
+});
+
+$app->get('/godmode',function(){
+    
+    return $app->render('godmode.php'{
+        'title'=>'God Mode'
+    });
+
+});
+
 
 $app->get('/', function() {
 
-     $clockwork = new \Clockwork\Clockwork(W\System::getApiKey(ROOT . 'api.json'), array('from' => 'WerewolfSMS'));
+     // $clockwork = new \Clockwork\Clockwork(W\System::getApiKey(ROOT . 'api.json'), array('from' => 'WerewolfSMS'));
 
     try {
 
-        $john = new W\Person(W\Person::VILLAGER, 'John Crossley', '07598935460', $clockwork);
+        // $john = new W\Person(W\Person::VILLAGER, 'John Crossley', '07598935460', $clockwork);
 
-        $nick = new W\Person(W\Person::VILLAGER, 'Nicholas Mitchell', '07765150512', $clockwork);
+        // $nick = new W\Person(W\Person::VILLAGER, 'Nicholas Mitchell', '07765150512', $clockwork);
 
         // $person3 = new W\Person(W\Person::WEREWOLF, "Villager Three");
 
