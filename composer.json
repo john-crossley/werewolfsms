@@ -1,5 +1,9 @@
 {
   "require": {
-    "slim/slim": "2.*"
+    "slim/slim": "2.*",
+      "behat/behat": "2.4.*@stable",
+      "behat/mink": "1.4.*@stable",
+      "behat/mink-extension": "*",
+      "behat/mink-goutte-driver": "*"
   }
 }
