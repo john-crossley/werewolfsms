@@ -42,4 +42,9 @@ $app->get('/people/alive', function() {
     echo json_encode($players);
 });
 
+$app->get('/people', function() use ($clockwork) {
+    $storage = new W\GameStorage($clockwork);
+    echo json_encode($storage->getAllPlayers());
+});
+
 $app->run();
