@@ -4,6 +4,7 @@ Feature: The sun is high in the sky!
     Given it is day phase
     And people are asleep
     Then wake people up
+    And tell people who has died (possibly noone)
     And ask people to discuss
     And accept nominations
 
