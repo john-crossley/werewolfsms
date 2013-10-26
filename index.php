@@ -33,6 +33,8 @@ $app->get('/', function() {
 
         // $john->wake($john);
 
+        $john->kill(W\Person::KILL_BY_WEREWOLF);
+
 //        echo "<pre>";
 //        var_dump( serialize($john) );
 //        echo "</pre>";

@@ -99,22 +99,12 @@ class Person {
      */
     public function wake(Person $person = null)
     {
-        return $this->contactPerson($person, "");
-
-        // Store the sms object
-        $sms = $this->smsObject;
-
-        try {
-            $message['to'] = $this->phoneNumber;
-            if (!is_null($person)) {
-                $message['message'] = "OMG, {$person->name} has been found dead! There's blood and guts everywhere. Please discuss on who you think committed this insidious act of violence.";
-            } else {
-                $message['message'] = "It's the dawn of a new day. There is an werewolf in our midst! Discuss who you this this is.";
-            }
-            return $sms->send($message);
-        } catch (ClockworkException $e) {
-            return $e->getMessage();
+        if (!is_null($person)) {
+            $message = "OMG, {$person->name} has been found dead! There's blood and guts everywhere. Please discuss on who you think committed this insidious act of violence.";
+        } else {
+            $message = "It's the dawn of a new day. There is an werewolf in our midst! Discuss who you this this is.";
         }
+        return $this->contactPerson($person, $message);
     }
 
     /**
@@ -142,19 +132,23 @@ class Person {
      */
     public function kill($howToKill)
     {
+        $message = '';
         switch ($howToKill) {
             case self::KILL_BY_LYNCH:
                 $this->deathBy = 'Death by Lynching';
+                $message = 'The villagers have decided to lynch you!';
                 break;
             case self::KILL_BY_WEREWOLF:
                 $this->deathBy = 'Death by Werewolf';
+                $message = 'You have been killed by a Werewolf!';
                 break;
             default:
                 $this->deathBy = 'Death by Suicide';
+                $message = 'For some reason you have decided to kill yourself!';
                 break;
         }
-
         $this->alive = false;
+        return $this->contactPerson($this, $message);
     }
 
     /**
