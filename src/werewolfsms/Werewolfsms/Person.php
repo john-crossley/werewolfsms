@@ -2,6 +2,7 @@
 
 namespace Werewolfsms;
 
+use Clockwork\ClockworkException;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 class Person {
@@ -22,21 +23,13 @@ class Person {
     private $consciousness;
     private $alive;
     private $deathBy;
+    private $name;
+    private $smsObject;
+    private $phoneNumber;
 
 
-    // Send out an sms - Such and such a person has been voted do
-    // we have a seconder.
-    public function askForSeconders(Person $person) {
-        // return true; or false;
-    }
-    public function askForVote(Person $person) {
-        // return true; or false;
-    }
-
-
-    public function __construct($role)
+    public function __construct($role, $name, $phoneNumber, $smsObject)
     {
-
         // Ensure the role exists.
         if (self::VILLAGER === $role || self::WEREWOLF === $role) {
             $this->role = $role;
@@ -48,6 +41,52 @@ class Person {
         $this->consciousness = static::AWAKE;
         // Person is alive by default
         $this->alive = true;
+
+        $this->name = $name;
+
+        // Store the game state
+        $this->smsObject = $smsObject;
+
+        $this->phoneNumber = $phoneNumber;
+    }
+
+    /**
+     * Get the name of the villager
+     * @return string
+     */
+    public function name()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set the name of the village.
+     * @param $name String The name of the villager
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    // Send out an sms - Such and such a person has been voted do
+    // we have a seconder.
+    public function askForSeconders(Person $person)
+    {
+
+    }
+
+    public function askForVote(Person $person)
+    {
+        try {
+            $sms = $this->smsObject;
+            $message = array(
+                'to' => $person->phoneNumber,
+                'message' => 'I am voting for: ' . $person->name
+            );
+            return $sms->send($message);
+        } catch (ClockworkException $e) {
+            return $e->getMessage();
+        }
     }
 
     /**
@@ -72,9 +111,20 @@ class Person {
      * Sets the consciousness of the person
      * object to be awake.
      */
-    public function wake()
+    public function wake(Person $person)
     {
-        $this->consciousness = static::AWAKE;
+        $name = $person->name;
+
+        try {
+            $sms = $this->smsObject;
+            $message = array(
+                'to' => $this->phoneNumber,
+                'message' => 'OMFG... It\'s one of the villagers'
+            );
+            return $sms->send($message);
+        } catch (ClockworkException $e) {
+            return $e->getMessage();
+        }
     }
 
     /**

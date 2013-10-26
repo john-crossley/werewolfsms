@@ -9,43 +9,22 @@ $app = new Slim\Slim;
 
 $app->get('/', function() {
 
-    // $clockwork = new \Clockwork\Clockwork(W\System::getApiKey(ROOT . 'api.json'));
+     $clockwork = new \Clockwork\Clockwork(W\System::getApiKey(ROOT . 'api.json'), array('from' => 'WerewolfSMS'));
 
     try {
-        $person = new W\Person(W\Person::VILLAGER);
+
+        $john = new W\Person(W\Person::VILLAGER, 'John Crossley', '07598935460', $clockwork);
+
+        $nick = new W\Person(W\Person::VILLAGER, 'Nicholas Mitchell', '07765150512', $clockwork);
+
+        // $person3 = new W\Person(W\Person::WEREWOLF, "Villager Three");
+
+        // var_dump( $nick->askForVote( $john ) );
+
+
     } catch (\Exception $e) {
         die($e->getMessage());
     }
-
-    // var_dump($person);
-    // $person->kill(W\Person::LYNCH);
-
-    $person->sleep();
-
-
-    echo "<pre>";
-    var_dump($person);
-    echo "</pre>";
-
-    echo "<pre>";
-    var_dump($person->isAlive());
-    echo "</pre>";
-
-    echo "<pre>";
-    var_dump($person);
-    echo "</pre>";
-
-    $person->kill(W\Person::KILL_BY_LYNCH);
-
-    echo "<pre>";
-    var_dump($person->isAlive());
-    echo "</pre>";
-
-    echo $person->methodOfDeath();
-
-    echo "<pre>";
-    var_dump($person);
-    echo "</pre>";
 
 });
 
