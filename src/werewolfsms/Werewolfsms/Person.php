@@ -46,7 +46,7 @@ class Person {
      */
     public function initialise($jsonObject)
     {
-        // Some magic
+        // Some random magic
     }
 
 //    public function __construct($role, $name, $phoneNumber, $smsObject)

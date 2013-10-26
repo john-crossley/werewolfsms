@@ -19,7 +19,11 @@ $app->post('/register', function() use ($app) {
 
 $app->get('/', function() {
 
-     $clockwork = new \Clockwork\Clockwork(W\System::getApiKey(ROOT . 'api.json'), array('from' => 'WerewolfSMS'));
+    // Clockwork sms object
+    $clockwork = new \Clockwork\Clockwork(
+        W\System::getApiKey(ROOT . 'api.json'),
+        array('from' => 'WerewolfSMS')
+    );
 
     try {
 
@@ -28,10 +32,12 @@ $app->get('/', function() {
         // $john = new W\Person($gameController, $clockwork);
 
         $person = new W\Person($clockwork);
-        $person->name = "Joon Crossley";
+        $person->setName("Joon Crossley");
+
+
 
         echo "<pre>";
-        print_r($person);
+        print_r($person->name());
         echo "</pre>";
 
 //        $nick = new W\Person(W\Person::VILLAGER, 'Nicholas Mitchell', '07765150512', $clockwork);
