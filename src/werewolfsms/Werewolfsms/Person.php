@@ -19,15 +19,12 @@ class Person {
     const AWAKE = 'awake';
     const ASLEEP = 'asleep';
 
-    public function __get($property)
-    {
-        return isset($this->$property) ? $this->$property : false;
-    }
+    private $consciousness,
+            $alive,
+            $smsObject,
+            $mobileNumber,
+            $id;
 
-    public function __set($property, $value)
-    {
-        $this->$property = $value;
-    }
 
     /**
      * The Person constructor - Is called when its the start of a new game.
@@ -36,46 +33,41 @@ class Person {
      */
     public function __construct(\Clockwork\Clockwork $smsObject)
     {
+        // Set some default values on the person.
+        $this->consciousness = self::AWAKE;
+        $this->alive = true;
         $this->smsObject = $smsObject;
     }
 
     /**
-     * The initialise method, loads the persons current state.
+     * Pass in a person state as a JSON object.
      *
-     * @param $jsonObject The person as a JSON object
+     * @param $json The person state
      */
-    public function initialise($jsonObject)
+    public function initialise($json, $smsObject)
     {
-        // Some random magic
+        $this->smsObject = $smsObject;
+        $person = json_decode($json);
+        $this->consciousness = $person->consciousness;
+        $this->alive = $person->alive;
+        $this->id = $person->_id;
     }
 
-//    public function __construct($role, $name, $phoneNumber, $smsObject)
-//    {
-//        // Ensure the role exists.
-//        if (self::VILLAGER === $role || self::WEREWOLF === $role) {
-//            $this->role = $role;
-//        } else {
-//            throw new \Exception("Invalid role has been supplied for the person object.");
-//        }
-//
-//        // Default consciousness
-//        $this->consciousness = static::AWAKE;
-//        // Person is alive by default
-//        $this->alive = true;
-//
-//        $this->name = $name;
-//
-//        // Store the game state
-//        $this->smsObject = $smsObject;
-//
-//        $this->phoneNumber = $phoneNumber;
-//    }
+    public function setRole($role)
+    {
+        if (self::VILLAGER === $role || self::WEREWOLF === $role) {
+            // We can set the role.
+            $this->role = $role;
+        } else {
+            throw new \Exception('Invalid role has been supplied to the person object.');
+        }
+    }
 
     /**
      * Get the name of the villager
      * @return string
      */
-    public function name()
+    public function getName()
     {
         return $this->name;
     }
@@ -86,23 +78,46 @@ class Person {
      */
     public function setName($name)
     {
-        $this->name = $name;
-    }
-
-    // Send out an sms - Such and such a person has been voted do
-    // we have a seconder.
-    public function askForSeconders(Person $person)
-    {
-
+        $this->name = strip_tags($name);
     }
 
     /**
      * Gets the consciousness (state) of the person object.
      * @return string The consciousness of the person object.
      */
-    public function consciousness()
+    public function getConsciousness()
     {
         return $this->consciousness;
+    }
+
+    public function setConsciousness($consciousness)
+    {
+        if (self::AWAKE === $consciousness || self::ASLEEP === $consciousness) {
+            // We can set the role.
+            $this->consciousness = $consciousness;
+        } else {
+            throw new \Exception('Invalid consciousness has been supplied to the person object.');
+        }
+    }
+
+    /**
+     * Set the mobile number of a person
+     *
+     * @param $phoneNumber The mobile number
+     */
+    public function setMobileNumber($mobileNumber)
+    {
+        // Todo: Validate this mobile number
+        $this->mobileNumber = $mobileNumber;
+    }
+
+    /**
+     * Get the mobile number of the person.
+     * @return The persons phone number
+     */
+    public function getMobileNumber()
+    {
+        return $this->mobileNumber;
     }
 
     /**
@@ -111,7 +126,7 @@ class Person {
      */
     public function sleep()
     {
-        $this->consciousness = static::ASLEEP;
+        $this->setConsciousness(self::ASLEEP);
     }
 
     /**
@@ -121,7 +136,7 @@ class Person {
     public function wake(Person $person = null)
     {
         if (!is_null($person)) {
-            $message = "OMG, {$person->name} has been found dead! There's blood and guts everywhere. Please discuss on who you think committed this insidious act of violence.";
+            $message = "OMG, {$person->getName()} has been found dead! There's blood and guts everywhere. Please discuss on who you think committed this insidious act of violence.";
         } else {
             $message = "It's the dawn of a new day. There is an werewolf in our midst! Discuss who you this this is.";
         }
@@ -139,7 +154,7 @@ class Person {
     {
         try {
             return $this->smsObject->send(array(
-                'to' => $person->phoneNumber,
+                'to' => $person->mobileNumber,
                 'message' => $message
             ));
         } catch (ClockworkException $e) {

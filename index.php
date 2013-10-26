@@ -22,37 +22,19 @@ $app->get('/', function() {
     // Clockwork sms object
     $clockwork = new \Clockwork\Clockwork(
         W\System::getApiKey(ROOT . 'api.json'),
-        array('from' => 'WerewolfSMS')
+        array('from' => 'WEREWOLFSMS')
     );
 
     try {
 
-        // $john = new W\Person(W\Person::VILLAGER, 'John Crossley', '07598935460', $clockwork);
-
-        // $john = new W\Person($gameController, $clockwork);
-
+        // Create a new instance of a person
         $person = new W\Person($clockwork);
-        $person->setName("Joon Crossley");
+        $person->setName("John Crossley");
+        $person->setMobileNumber('07598935460');
 
 
 
-        echo "<pre>";
-        print_r($person->name());
-        echo "</pre>";
-
-//        $nick = new W\Person(W\Person::VILLAGER, 'Nicholas Mitchell', '07765150512', $clockwork);
-
-        // $person3 = new W\Person(W\Person::WEREWOLF, "Villager Three");
-
-        // var_dump( $nick->askForVote( $john ) );
-
-        // $john->wake($john);
-
-//        $john->kill(W\Person::KILL_BY_WEREWOLF);
-
-//        echo "<pre>";
-//        var_dump( serialize($john) );
-//        echo "</pre>";
+        var_dump($person->kill(W\Person::KILL_BY_LYNCH));
 
 
     } catch (\Exception $e) {
