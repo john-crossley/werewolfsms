@@ -29,7 +29,7 @@ class GameStorage {
         $this->clockworkObject = $clockworkObject;
     }
 
-    public function getAllPlayers()
+    public function getAllPeople()
     {
         if (is_null($this->allPlayers)) {
             $currentGame = $this->getGame();
