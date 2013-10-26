@@ -5,5 +5,10 @@
       "behat/mink": "1.4.*@stable",
       "behat/mink-extension": "*",
       "behat/mink-goutte-driver": "*"
+  },
+  "autoload": {
+    "psr-0": {
+      "Werewolfsms": "src/werewolfsms"
+    }
   }
 }
