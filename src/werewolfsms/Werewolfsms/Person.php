@@ -6,19 +6,22 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 
 class Person {
 
+    // Deaths
+    const LYNCH = 'lynch';
+    const WEREWOLF_KILL = 'werewolf_kill';
+
+    // Role
     const VILLAGER = 'villager';
     const WEREWOLF = 'werewolf';
 
+    // Consciousness
     const AWAKE = 'awake';
     const ASLEEP = 'asleep';
 
-    public $role; // Werewolf/Villager
-    public $consciousness; // Awake/Asleep
+    public $role;
+    public $consciousness;
+    public $alive;
 
-    public function sleep() {}
-    public function wake() {}
-
-    public function kill($howToKill) {}
 
     // Send out an sms - Such and such a person has been voted do
     // we have a seconder.
@@ -41,7 +44,44 @@ class Person {
         }
 
         // Default consciousness
-        $this->consciousness = self::AWAKE;
+        $this->consciousness = static::AWAKE;
+        $this->alive = true;
+    }
+
+    /**
+     * Gets the consciousness (state) of the person object.
+     * @return string The consciousness of the person object.
+     */
+    public function consciousness()
+    {
+        return $this->consciousness;
+    }
+
+    /**
+     * Sets the consciousness of the person
+     * object to asleep.
+     */
+    public function sleep()
+    {
+        $this->consciousness = static::ASLEEP;
+    }
+
+    /**
+     * Sets the consciousness of the person
+     * object to be awake.
+     */
+    public function wake()
+    {
+        $this->consciousness = static::AWAKE;
+    }
+
+
+    public function kill($howToKill)
+    {
+        if ($this->alive) {
+            $this->alive = false; // Kill the bastard
+        }
+        return $this->alive;
     }
 
 }

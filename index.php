@@ -18,6 +18,9 @@ $app->get('/', function() {
     }
 
     var_dump($person);
+    $person->kill(W\Person::LYNCH);
+    echo "<br>";
+    var_dump($person);
 
 });
 
