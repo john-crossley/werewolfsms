@@ -5,7 +5,7 @@ define('ROOT', str_replace('\\', '/', dirname(__FILE__)) . '/');
 
 use Werewolfsms as W;
 
-$app = new \Slim\Slim;
+$app = new Slim\Slim;
 
 $app->get('/', function() {
 
@@ -22,17 +22,24 @@ $app->get('/', function() {
 
     $person->sleep();
 
-    echo "<pre>";
-    var_dump($person);
-    echo "</pre>";
-
-    $person->wake();
 
     echo "<pre>";
     var_dump($person);
     echo "</pre>";
 
-    $person->kill(W\Person::KILL_BY_WEREWOLF);
+    echo "<pre>";
+    var_dump($person->isAlive());
+    echo "</pre>";
+
+    echo "<pre>";
+    var_dump($person);
+    echo "</pre>";
+
+    $person->kill(W\Person::KILL_BY_LYNCH);
+
+    echo "<pre>";
+    var_dump($person->isAlive());
+    echo "</pre>";
 
     echo $person->methodOfDeath();
 

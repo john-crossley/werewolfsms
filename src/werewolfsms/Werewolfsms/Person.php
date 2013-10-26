@@ -98,6 +98,18 @@ class Person {
         $this->alive = false;
     }
 
+    /**
+     * Checks to see if the person is alive or not.
+     * @return bool True or False depending on the person.
+     */
+    public function isAlive()
+    {
+        return ($this->alive) ? true : false;
+    }
+
+    /**
+     * @return string
+     */
     public function methodOfDeath()
     {
         return $this->deathBy;
