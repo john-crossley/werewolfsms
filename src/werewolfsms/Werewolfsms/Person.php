@@ -75,20 +75,6 @@ class Person {
 
     }
 
-    public function askForVote(Person $person)
-    {
-//        try {
-//            $sms = $this->smsObject;
-//            $message = array(
-//                'to' => $person->phoneNumber,
-//                'message' => 'I am voting for: ' . $person->name
-//            );
-//            return $sms->send($message);
-//        } catch (ClockworkException $e) {
-//            return $e->getMessage();
-//        }
-    }
-
     /**
      * Gets the consciousness (state) of the person object.
      * @return string The consciousness of the person object.
@@ -113,21 +99,38 @@ class Person {
      */
     public function wake(Person $person = null)
     {
+        return $this->contactPerson($person, "");
+
         // Store the sms object
         $sms = $this->smsObject;
 
         try {
-
             $message['to'] = $this->phoneNumber;
-
             if (!is_null($person)) {
-                $message['message'] = "OMG, {$person->name} has been found dead! There's blood and guts everywhere.
-                Please discuss on who you think committed this horrible act of violence.";
+                $message['message'] = "OMG, {$person->name} has been found dead! There's blood and guts everywhere. Please discuss on who you think committed this insidious act of violence.";
             } else {
-                $message['message'] = "It's the dawn of a new day. There is an evil person in our midst! Discuss who you this this is.";
+                $message['message'] = "It's the dawn of a new day. There is an werewolf in our midst! Discuss who you this this is.";
             }
-
             return $sms->send($message);
+        } catch (ClockworkException $e) {
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * Send a message to a person object.
+     *
+     * @param Person $person A person object
+     * @param $message The message to send to the person
+     * @return string Success or failure information.
+     */
+    private function contactPerson(Person $person, $message)
+    {
+        try {
+            return $this->smsObject->send(array(
+                'to' => $person->phoneNumber,
+                'message' => $message
+            ));
         } catch (ClockworkException $e) {
             return $e->getMessage();
         }

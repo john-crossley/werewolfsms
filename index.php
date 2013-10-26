@@ -7,6 +7,16 @@ use Werewolfsms as W;
 
 $app = new Slim\Slim;
 
+$app->get('/register', function() use ($app) {
+    return $app->render('index.php', array(
+        'title' => 'This is the title'
+    ));
+});
+
+$app->post('/register', function() use ($app) {
+    var_dump($_POST);
+});
+
 $app->get('/', function() {
 
      $clockwork = new \Clockwork\Clockwork(W\System::getApiKey(ROOT . 'api.json'), array('from' => 'WerewolfSMS'));
@@ -21,7 +31,11 @@ $app->get('/', function() {
 
         // var_dump( $nick->askForVote( $john ) );
 
-        $john->wake($nick);
+        // $john->wake($john);
+
+//        echo "<pre>";
+//        var_dump( serialize($john) );
+//        echo "</pre>";
 
 
     } catch (\Exception $e) {
