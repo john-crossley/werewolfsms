@@ -12,15 +12,33 @@ $app->get('/', function() {
     // $clockwork = new \Clockwork\Clockwork(W\System::getApiKey(ROOT . 'api.json'));
 
     try {
-        $person = new Werewolfsms\Person(W\Person::VILLAGER);
+        $person = new W\Person(W\Person::VILLAGER);
     } catch (\Exception $e) {
         die($e->getMessage());
     }
 
+    // var_dump($person);
+    // $person->kill(W\Person::LYNCH);
+
+    $person->sleep();
+
+    echo "<pre>";
     var_dump($person);
-    $person->kill(W\Person::LYNCH);
-    echo "<br>";
+    echo "</pre>";
+
+    $person->wake();
+
+    echo "<pre>";
     var_dump($person);
+    echo "</pre>";
+
+    $person->kill(W\Person::KILL_BY_WEREWOLF);
+
+    echo $person->methodOfDeath();
+
+    echo "<pre>";
+    var_dump($person);
+    echo "</pre>";
 
 });
 

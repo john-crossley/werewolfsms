@@ -7,8 +7,8 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 class Person {
 
     // Deaths
-    const LYNCH = 'lynch';
-    const WEREWOLF_KILL = 'werewolf_kill';
+    const KILL_BY_LYNCH = 'kill_by_lynch';
+    const KILL_BY_WEREWOLF = 'kill_by_werewolf';
 
     // Role
     const VILLAGER = 'villager';
@@ -18,9 +18,10 @@ class Person {
     const AWAKE = 'awake';
     const ASLEEP = 'asleep';
 
-    public $role;
-    public $consciousness;
-    public $alive;
+    private $role;
+    private $consciousness;
+    private $alive;
+    private $deathBy;
 
 
     // Send out an sms - Such and such a person has been voted do
@@ -37,7 +38,7 @@ class Person {
     {
 
         // Ensure the role exists.
-        if ($role === static::VILLAGER || $role === static::WEREWOLF) {
+        if (self::VILLAGER === $role || self::WEREWOLF === $role) {
             $this->role = $role;
         } else {
             throw new \Exception("Invalid role has been supplied for the person object.");
@@ -45,6 +46,7 @@ class Person {
 
         // Default consciousness
         $this->consciousness = static::AWAKE;
+        // Person is alive by default
         $this->alive = true;
     }
 
@@ -75,13 +77,30 @@ class Person {
         $this->consciousness = static::AWAKE;
     }
 
-
+    /**
+     * Kills the person object
+     * @param $howToKill - How the person should be killed.
+     */
     public function kill($howToKill)
     {
-        if ($this->alive) {
-            $this->alive = false; // Kill the bastard
+        switch ($howToKill) {
+            case self::KILL_BY_LYNCH:
+                $this->deathBy = 'Death by Lynching';
+                break;
+            case self::KILL_BY_WEREWOLF:
+                $this->deathBy = 'Death by Werewolf';
+                break;
+            default:
+                $this->deathBy = 'Death by Suicide';
+                break;
         }
-        return $this->alive;
+
+        $this->alive = false;
+    }
+
+    public function methodOfDeath()
+    {
+        return $this->deathBy;
     }
 
 }
