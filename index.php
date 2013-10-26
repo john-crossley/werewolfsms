@@ -23,9 +23,18 @@ $app->get('/', function() {
 
     try {
 
-        $john = new W\Person(W\Person::VILLAGER, 'John Crossley', '07598935460', $clockwork);
+        // $john = new W\Person(W\Person::VILLAGER, 'John Crossley', '07598935460', $clockwork);
 
-        $nick = new W\Person(W\Person::VILLAGER, 'Nicholas Mitchell', '07765150512', $clockwork);
+        // $john = new W\Person($gameController, $clockwork);
+
+        $person = new W\Person($clockwork);
+        $person->name = "Joon Crossley";
+
+        echo "<pre>";
+        print_r($person);
+        echo "</pre>";
+
+//        $nick = new W\Person(W\Person::VILLAGER, 'Nicholas Mitchell', '07765150512', $clockwork);
 
         // $person3 = new W\Person(W\Person::WEREWOLF, "Villager Three");
 
@@ -33,7 +42,7 @@ $app->get('/', function() {
 
         // $john->wake($john);
 
-        $john->kill(W\Person::KILL_BY_WEREWOLF);
+//        $john->kill(W\Person::KILL_BY_WEREWOLF);
 
 //        echo "<pre>";
 //        var_dump( serialize($john) );

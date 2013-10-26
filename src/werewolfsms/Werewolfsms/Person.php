@@ -19,36 +19,57 @@ class Person {
     const AWAKE = 'awake';
     const ASLEEP = 'asleep';
 
-    private $role;
-    private $consciousness;
-    private $alive;
-    private $deathBy;
-    private $name;
-    private $smsObject;
-    private $phoneNumber;
-
-
-    public function __construct($role, $name, $phoneNumber, $smsObject)
+    public function __get($property)
     {
-        // Ensure the role exists.
-        if (self::VILLAGER === $role || self::WEREWOLF === $role) {
-            $this->role = $role;
-        } else {
-            throw new \Exception("Invalid role has been supplied for the person object.");
-        }
-
-        // Default consciousness
-        $this->consciousness = static::AWAKE;
-        // Person is alive by default
-        $this->alive = true;
-
-        $this->name = $name;
-
-        // Store the game state
-        $this->smsObject = $smsObject;
-
-        $this->phoneNumber = $phoneNumber;
+        return isset($this->$property) ? $this->$property : false;
     }
+
+    public function __set($property, $value)
+    {
+        $this->$property = $value;
+    }
+
+    /**
+     * The Person constructor - Is called when its the start of a new game.
+     *
+     * @param \Clockwork\Clockwork $smsObject - Requires the SMS object.
+     */
+    public function __construct(\Clockwork\Clockwork $smsObject)
+    {
+        $this->smsObject = $smsObject;
+    }
+
+    /**
+     * The initialise method, loads the persons current state.
+     *
+     * @param $jsonObject The person as a JSON object
+     */
+    public function initialise($jsonObject)
+    {
+        // Some magic
+    }
+
+//    public function __construct($role, $name, $phoneNumber, $smsObject)
+//    {
+//        // Ensure the role exists.
+//        if (self::VILLAGER === $role || self::WEREWOLF === $role) {
+//            $this->role = $role;
+//        } else {
+//            throw new \Exception("Invalid role has been supplied for the person object.");
+//        }
+//
+//        // Default consciousness
+//        $this->consciousness = static::AWAKE;
+//        // Person is alive by default
+//        $this->alive = true;
+//
+//        $this->name = $name;
+//
+//        // Store the game state
+//        $this->smsObject = $smsObject;
+//
+//        $this->phoneNumber = $phoneNumber;
+//    }
 
     /**
      * Get the name of the villager
