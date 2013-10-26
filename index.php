@@ -28,4 +28,18 @@ $app->get('/', function() {
 
 });
 
+$app->get('/people', function() {
+    $game = new W\GameController();
+    $game->loadState($jsonObject);
+    $players = $game->getCurrentPlayers();
+    echo json_encode($players);
+});
+
+$app->get('/people/alive', function() {
+    $game = new W\GameController();
+    $game->loadState($jsonObject);
+    $players = $game->getAlivePlayers();
+    echo json_encode($players);
+});
+
 $app->run();
