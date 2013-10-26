@@ -21,11 +21,17 @@ $app->get('/', function() {
 
         // var_dump( $nick->askForVote( $john ) );
 
+        $john->wake($nick);
+
 
     } catch (\Exception $e) {
         die($e->getMessage());
     }
 
 });
+
+//$app->get('admin/', function() {
+//    $app->render('index.php', array('title' => 'Nicks Page'));
+//});
 
 $app->run();

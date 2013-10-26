@@ -77,16 +77,16 @@ class Person {
 
     public function askForVote(Person $person)
     {
-        try {
-            $sms = $this->smsObject;
-            $message = array(
-                'to' => $person->phoneNumber,
-                'message' => 'I am voting for: ' . $person->name
-            );
-            return $sms->send($message);
-        } catch (ClockworkException $e) {
-            return $e->getMessage();
-        }
+//        try {
+//            $sms = $this->smsObject;
+//            $message = array(
+//                'to' => $person->phoneNumber,
+//                'message' => 'I am voting for: ' . $person->name
+//            );
+//            return $sms->send($message);
+//        } catch (ClockworkException $e) {
+//            return $e->getMessage();
+//        }
     }
 
     /**
@@ -111,16 +111,22 @@ class Person {
      * Sets the consciousness of the person
      * object to be awake.
      */
-    public function wake(Person $person)
+    public function wake(Person $person = null)
     {
-        $name = $person->name;
+        // Store the sms object
+        $sms = $this->smsObject;
 
         try {
-            $sms = $this->smsObject;
-            $message = array(
-                'to' => $this->phoneNumber,
-                'message' => 'OMFG... It\'s one of the villagers'
-            );
+
+            $message['to'] = $this->phoneNumber;
+
+            if (!is_null($person)) {
+                $message['message'] = "OMG, {$person->name} has been found dead! There's blood and guts everywhere.
+                Please discuss on who you think committed this horrible act of violence.";
+            } else {
+                $message['message'] = "It's the dawn of a new day. There is an evil person in our midst! Discuss who you this this is.";
+            }
+
             return $sms->send($message);
         } catch (ClockworkException $e) {
             return $e->getMessage();
