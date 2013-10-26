@@ -19,12 +19,9 @@ class Person {
     const AWAKE = 'awake';
     const ASLEEP = 'asleep';
 
-    private $consciousness,
-            $alive,
-            $smsObject,
-            $mobileNumber,
-            $id;
-
+    // Stores the actual state
+    // of the person object.
+    public $personState;
 
     /**
      * The Person constructor - Is called when its the start of a new game.
@@ -33,9 +30,15 @@ class Person {
      */
     public function __construct(\Clockwork\Clockwork $smsObject)
     {
-        // Set some default values on the person.
-        $this->consciousness = self::AWAKE;
-        $this->alive = true;
+        $this->personState = new \stdClass();
+
+        // Set some state values
+        $this->personState->consciousness = self::AWAKE;
+        $this->personState->alive = true;
+        $this->personState->role = self::VILLAGER;
+        $this->personState->name = 'VILLAGER ' . mt_rand(0, 99);
+
+        // Set the sms object
         $this->smsObject = $smsObject;
     }
 
@@ -46,18 +49,18 @@ class Person {
      */
     public function initialise($json, $smsObject)
     {
-        $this->smsObject = $smsObject;
-        $person = json_decode($json);
-        $this->consciousness = $person->consciousness;
-        $this->alive = $person->alive;
-        $this->id = $person->_id;
+//        $this->smsObject = $smsObject;
+//        $person = json_decode($json);
+//        $this->consciousness = $person->consciousness;
+//        $this->alive = $person->alive;
+//        $this->id = $person->_id;
     }
 
     public function setRole($role)
     {
         if (self::VILLAGER === $role || self::WEREWOLF === $role) {
             // We can set the role.
-            $this->role = $role;
+            $this->personState->role = $role;
         } else {
             throw new \Exception('Invalid role has been supplied to the person object.');
         }
@@ -69,7 +72,7 @@ class Person {
      */
     public function getName()
     {
-        return $this->name;
+        return $this->personState->name;
     }
 
     /**
@@ -78,7 +81,7 @@ class Person {
      */
     public function setName($name)
     {
-        $this->name = strip_tags($name);
+        $this->personState->name = strip_tags($name);
     }
 
     /**
@@ -87,14 +90,14 @@ class Person {
      */
     public function getConsciousness()
     {
-        return $this->consciousness;
+        return $this->personState->consciousness;
     }
 
     public function setConsciousness($consciousness)
     {
         if (self::AWAKE === $consciousness || self::ASLEEP === $consciousness) {
             // We can set the role.
-            $this->consciousness = $consciousness;
+            $this->personState->consciousness = $consciousness;
         } else {
             throw new \Exception('Invalid consciousness has been supplied to the person object.');
         }
@@ -108,7 +111,7 @@ class Person {
     public function setMobileNumber($mobileNumber)
     {
         // Todo: Validate this mobile number
-        $this->mobileNumber = $mobileNumber;
+        $this->personState->mobileNumber = $mobileNumber;
     }
 
     /**
@@ -117,7 +120,7 @@ class Person {
      */
     public function getMobileNumber()
     {
-        return $this->mobileNumber;
+        return $this->personState->mobileNumber;
     }
 
     /**
@@ -183,7 +186,7 @@ class Person {
                 $message = 'For some reason you have decided to kill yourself!';
                 break;
         }
-        $this->alive = false;
+        $this->personState->alive = false;
         return $this->contactPerson($this, $message);
     }
 
@@ -193,7 +196,7 @@ class Person {
      */
     public function isAlive()
     {
-        return ($this->alive) ? true : false;
+        return ($this->personState->alive) ? true : false;
     }
 
     /**
@@ -201,7 +204,23 @@ class Person {
      */
     public function methodOfDeath()
     {
-        return $this->deathBy;
+        return $this->personState->deathBy;
     }
 
+    /**
+     * Create a JSON string from the current person object.
+     * @return string a JSON version of the object
+     */
+    public function toJSON()
+    {
+        return json_encode($this->personState);
+    }
+
+    public function fromJSON($jsonObjectAsString)
+    {
+        // This will set the state of the person to what it was
+        // when the person was saved as JSON.
+        $this->personState = json_decode($jsonObjectAsString);
+        return $this;
+    }
 }
