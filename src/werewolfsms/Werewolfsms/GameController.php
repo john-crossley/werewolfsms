@@ -31,7 +31,42 @@ class GameController
         }
     }
 
-    public function Vote($who, $guilty)
+    public function voteWolf($who, $victim)
+    {
+        $wnum = $who->getMobileNumber();
+        if (array_key_exists($wnum, $this->wolfVotes))
+            throw Exception("You are not a wolf")
+        $this->wolfVotes[$who->getMobileNumber()] = $victim;
+        $agree = true;
+        foreach ($this->wolfVotes as $other)
+        {
+            if (is_null($other))
+            {
+                return;
+            }
+            if (!same_person($other, $victim))
+            {
+                agree = false;
+            }
+        }
+        if (agree)
+        {
+            $this->wolfVotes = [];
+            $this->victim = $victim;
+            $this->enterPhase(self::DAY_DISCUSS);
+        }
+        else
+        {
+            foreach ($this->getLivingPeople as $person)
+            {
+                if ($person->role != Person::WEREWOLF)
+                    continue;
+                $person->askForKill(true);
+            }
+        }
+    }
+
+    public function voteLynch($who, $guilty)
     {
         $yes = 0;
         $no = 0;
@@ -53,8 +88,19 @@ class GameController
         {
             $yes += 1;
         }
-        $this->voteResult($this->accused, $yes > $no, $this->votes);
-        $this->enterPhase(self::NIGHT_WOLF);
+        $dead = $yes > $no;
+        for ($this->getLivingPeople() as $person)
+        {
+            $person->voteResult($this->accused, $dead, $this->votes);
+        }
+        $this->votes = [];
+        if ($dead) {
+            $this->enterPhase(self::NIGHT_WOLF);
+        }
+        else
+        {
+            $this->enterPhase(self::DAY_DISCUSS);
+        }
     }
 
     public function nominate($who, $accused)
@@ -109,9 +155,20 @@ class GameController
     {
         if ($this->phase == self::DAY_ARG1 && same_person($who, $this->nominator))
         {
-            $this->enterPhase;
+            $this->enterPhase(self::DAY_ARG2);
         }
-        throw \Exception("Whu?");
+        else if ($this->phase == self::DAY_ARG2 && same_person($who, $this->seconder))
+        {
+            $this->enterPhase(self::DAY_DEFEND);
+        }
+        else if ($this->phase == self::DAY_DEFEND && same_person($who, $this->seconder))
+        {
+            $this->enterPhase(self::DAY_VOTE);
+        }
+        else
+        {
+            throw new Exception("Whu?");
+        }
     }
 
     public function enterPhase($newphase)
@@ -120,18 +177,25 @@ class GameController
         switch ($newphase)
         {
         case self::NIGHT_WOLF:
+            $this->wolfVotes = []
             foreach ($this->getLivingPeople() as $person)
             {
-                $person->sleep();
+                if ($person->role != Person::WEREWOLF)
+                    continue;
+                $person->askForKill(false);
+                $this->wolfVotes[$person->getMobileNumber()] = null;
             }
             break;
 
         case self::DAY_DISCUSS:
-            foreach ($this->getLivingPeople() as $person)
+            if (is_null($this->victim))
             {
-                if ($person->consciousness() == Person::AWAKE)
-                    continue;
-                $person->wake($this->killed);
+                foreach ($this->getLivingPeople() as $person)
+                {
+                    if ($person->consciousness() == Person::AWAKE)
+                        continue;
+                    $person->wake($this->victim);
+                }
             }
             break;
 
@@ -189,16 +253,27 @@ class GameController
         $this->seconder = $this->toPerson($ar["seconder"]);
         $this->accused = $this->toPerson($ar["accused"]);
         $this->votes = $ar["votes"];
+        $this->wolfVotes = [];
+        foreach ($ar["wolfVotes"] as $wnum => $victim)
+        {
+            $this->wolfVotes[$wnum] = $this->toPerson($victim);
+        }
     }
 
     public function toJSON()
     {
+        $wolfVotes = [];
+        foreach ($this->wolfVotes as $wnum, $victim)
+        {
+            $wolfVotes[$wnum] = $victim->getMobileNumber();
+        }
         $ar = array(
             "phase" => $this->phase,
             "nominator" => $this->fromPerson($this->nominator),
             "seconder" => $this->fromPerson($this->seconder),
             "accused" => $this->fromPerson($this->accused),
-            "votes" => $this->votes
+            "votes" => $this->votes,
+            "wolfVotes" => $wolfVotes
         );
         return json_encode($ar);
     }
