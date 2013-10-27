@@ -49,7 +49,7 @@ class GameStorage {
     public function getGame()
     {
         if (is_null($this->currentGame)) {
-            $currentGame = new GameController($this);
+            $currentGame = new GameController($this, $this->clockworkObject);
             $currentGameJson = $this->gameCollection->findOne();
             $this->currentGame = $currentGame;
             $currentGame->fromJSON(json_encode($currentGameJson));
