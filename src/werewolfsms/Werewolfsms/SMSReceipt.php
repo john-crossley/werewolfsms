@@ -45,6 +45,12 @@ class SMSReceipt {
             case 'start' :
                 $game->startGame();
                 break;
+            case 'reset' :
+                $app->storage->resetDatabase();
+                break;
+            case 'again' :
+                $game->resetGame();
+                break;
         }
     }
 
