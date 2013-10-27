@@ -92,7 +92,7 @@ class GameController
     *Argue
      */
 
-    protected function getLivingPeople()
+    public function getLivingPeople()
     {
         $alivePeople = [];
         foreach ($this->people as $person)
