@@ -19,6 +19,13 @@ class Person {
     const AWAKE = 'awake';
     const ASLEEP = 'asleep';
 
+    // Reasonings
+    const NOMINATE = 'nominate';
+    const SECOND = 'second';
+    const DEFEND = 'defend';
+
+    // Nominate, second or defend
+
     // Stores the actual state
     // of the person object.
     public $personState,
@@ -194,6 +201,24 @@ class Person {
         return $this->contactPerson($this, $message);
     }
 
+
+    public function askForReasoning($typeOfArgument, Person $person)
+    {
+        switch($typeOfArgument) {
+            case 'nominate':
+                $this->contactPerson($this->getMobileNumber(),
+                    "Please present your reasons for nominating {$person->getName()}");
+                break;
+            case 'second':
+                $this->contactPerson($this->getMobileNumber(),
+                    "Please present your reasons for seconding {$person->getName()}");
+                break;
+            case self::DEFEND:
+                $this->contactPerson($this->getMobileNumber(),
+                    "Please defend your yourself against these accusations...");
+                break;
+        }
+    }
 
 
     public function voteResult(Person $person, $wasKilled, Array $people)
