@@ -30,6 +30,9 @@ $app->get('/learn-more',function()  use ($app){
 
 $app->get('/', function() {
 
+    $storage = new W\GameStorage($clockwork);
+    $game = $storage->getGame();
+
      // $clockwork = new \Clockwork\Clockwork(W\System::getApiKey(ROOT . 'api.json'), array('from' => 'WerewolfSMS'));
 
     try {
@@ -42,7 +45,7 @@ $app->get('/', function() {
 
         // var_dump( $nick->askForVote( $john ) );
 
-        $nick = new W\Person($clockwork, new $gameState);
+        $nick = new W\Person($clockwork, new $game);
         $nick->setName("Nicholas Mitchell");
         $nick->setMobileNumber('07765150512');
 

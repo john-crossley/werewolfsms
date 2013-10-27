@@ -9,7 +9,7 @@ function same_person($a, $b)
 
 class GameController
 {
-    const NIGHT_WOLF = "NIGHT_WOLF"
+    const NIGHT_WOLF = "NIGHT_WOLF";
     const DAY_DISCUSS = "DAY_DISCUSS";
     const DAY_NOMINATED = "DAY_NOMINATED";
     const DAY_ARG1 = "DAY_ARG1";
@@ -17,7 +17,7 @@ class GameController
     const DAY_DEFEND = "DAY_DEFEND";
     const DAY_VOTE = "DAY_VOTE";
 
-    public __constructor($storage)
+    public function __construct($storage)
     {
         $this->storage = $storage;
     }
@@ -25,9 +25,9 @@ class GameController
     private function resetVotes()
     {
         $this->votes = [];
-        foreach ($this.livePeople() as $person)
+        foreach ($this->livePeople() as $person)
         {
-            $this->votes[$person.getMobileNumber()] = null;
+            $this->votes[$person->getMobileNumber()] = null;
         }
     }
 
@@ -59,24 +59,24 @@ class GameController
 
     public function nominate($who, $accused)
     {
-        if (!is_null($this->accused))
+        if (!is_null($this->$accused))
         {
             throw new Exception($this->accused->friendlyName() . " has already been nominateed");
         }
-        $this->accused = accused;
+        $this->accused = $accused;
         $this->nominator = $who;
         $this->enterPhase(self::DAY_NOMINATED);
     }
 
     public function second($who, $accused)
     {
-        if (is_null($this->accused))
+        if (is_null($this->$accused))
         {
-            throw new Exception($who->friendlyName() . " has not been nominated");
+            throw new \Exception($who->friendlyName() . " has not been nominated");
         }
         if (!is_null($this->seconder))
         {
-            throw new Exception($this->accused->friendlyName() . " has already been seconded");
+            throw new \Exception($this->accused->friendlyName() . " has already been seconded");
         }
         $this->seconder = $who;
         $this->enterPhase(self::DAY_ARG1);
@@ -97,7 +97,7 @@ class GameController
         $alivePeople = [];
         foreach ($this->people as $person)
         {
-            if ($person.isAlive())
+            if ($person->isAlive())
             {
                 $alivePeople[] = $person;
             }
@@ -109,9 +109,9 @@ class GameController
     {
         if ($this->phase == self::DAY_ARG1 && same_person($who, $this->nominator))
         {
-            $this->enterPhase
+            $this->enterPhase;
         }
-        throw Exception("Whu?")
+        throw \Exception("Whu?");
     }
 
     public function enterPhase($newphase)
@@ -182,11 +182,11 @@ class GameController
 
     public function fromJSON($json)
     {
-        ar = decode_json($json, true);
-        $this->people = $this->storage->getAllPeople()
-        $this->moninator = $this->toPerson(ar["nominator"])
-        $this->seconder = $this->toPerson(ar["seconder"])
-        $this->accused = $this->toPerson(ar["accused"])
+        $ar = decode_json($json, true);
+        $this->people = $this->storage->getAllPeople();
+        $this->moninator = $this->toPerson($ar["nominator"]);
+        $this->seconder = $this->toPerson($ar["seconder"]);
+        $this->accused = $this->toPerson($ar["accused"]);
     }
 
     public function StartGame()
