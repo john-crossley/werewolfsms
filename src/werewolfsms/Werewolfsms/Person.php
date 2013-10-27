@@ -215,7 +215,10 @@ class Person {
         foreach ($people as $mobileNumber => $votedToKill) {
             // Get the person data from their mobile number
             $personData = $this->gameState->toPerson($mobileNumber);
-            $message .= $personData->getName();
+
+            die(var_dump($this->gameState));
+
+            $message .= $personData->name;
             $message .= ' voted, ';
             $message .= ($votedToKill) ? 'to kill ' : 'not to kill ';
             $message .= $person->getName();

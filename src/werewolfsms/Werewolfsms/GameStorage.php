@@ -34,9 +34,9 @@ class GameStorage {
         /* This call (getGame()) will call this function (getAllPeople), but once in this function
           will use the cached version it creates and will therefore not be infinite. */
         $currentGame = $this->getGame();
-        if (is_null($this->allPlayers)) {
-            $allPlayers = $this->playerCollection->find();
-            foreach ($allPlayers as $aPerson) {
+        if (is_null($this->allPeopleArray)) {
+            $allPeople = $this->peopleCollection->find();
+            foreach ($allPeople as $aPerson) {
                 $aPersonObject = new Person($this->clockworkObject,$currentGame);
                 $aPersonObject->fromJSON($aPerson);
                 $this->allPeopleArray[$aPerson->getMobileNumber()] = $aPerson;
@@ -50,8 +50,8 @@ class GameStorage {
         if (is_null($this->currentGame)) {
             $currentGame = new GameController($this);
             $currentGameJson = $this->gameCollection->findOne();
-            $currentGame->fromJSON($currentGameJson);
             $this->currentGame = $currentGame;
+            $currentGame->fromJSON($currentGameJson);
         }
         return $this->currentGame;
     }

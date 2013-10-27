@@ -45,9 +45,13 @@ $app->get('/', function() use ($clockwork) {
 
         // var_dump( $nick->askForVote( $john ) );
 
-        $nick = new W\Person($clockwork, new $game);
+        $nick = new W\Person($clockwork, $game);
         $nick->setName("Nicholas Mitchell");
         $nick->setMobileNumber('07765150512');
+
+        $john = new W\Person($clockwork, $game);
+        $john->setName("Nicholas Mitchell");
+        $john->setMobileNumber('07765150512');
 
         // This means nick was killed
         $john->voteResult($nick, false, array(
