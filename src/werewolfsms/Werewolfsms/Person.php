@@ -70,11 +70,14 @@ class Person {
 
     public function setRole($role)
     {
-        if (self::VILLAGER === $role || self::WEREWOLF === $role) {
-            // We can set the role.
+        if (self::VILLAGER === $role) {
             $this->personState->role = $role;
-        } else {
-            throw new \Exception('Invalid role has been supplied to the person object.');
+            $this->contactPerson($this->getMobileNumber(),
+                "You are a villager, night fall is upon us. Go to sleep!");
+        }
+
+        if (self::WEREWOLF === $role) {
+            $this->personState->role = $role;
         }
     }
 
