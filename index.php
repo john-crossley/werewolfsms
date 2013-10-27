@@ -8,7 +8,7 @@ use Werewolfsms as W;
 $app = new Slim\Slim;
 
 $clockwork = new \Clockwork\Clockwork(
-    W\System::getApiKey(ROOT . 'api.json'),
+    W\System::getApiKey(ROOT . 'config.json'),
     array('from' => 'WEREWOLFSMS')
 );
 
@@ -45,12 +45,12 @@ $app->get('/', function() use ($clockwork) {
 
 
         // This means nick was killed
-        $john->voteResult($nick, true, array(
-            '07598935460' => true,
-            // '07765150512' => true,
-           '00000000000' => false,
-           '07777777777' => true
-        ));
+//        $john->voteResult($nick, true, array(
+//            '07598935460' => true,
+//            // '07765150512' => true,
+//           '00000000000' => false,
+//           '07777777777' => true
+//        ));
 
 
     } catch (\Exception $e) {
