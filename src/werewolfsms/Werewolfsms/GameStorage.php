@@ -35,8 +35,8 @@ class GameStorage {
           will use the cached version it creates and will therefore not be infinite. */
         $currentGame = $this->getGame();
         if (is_null($this->allPeopleArray)) {
-            $allPlayers = $this->playerCollection->find();
-            foreach ($allPlayers as $aPerson) {
+            $allPeople = $this->peopleCollection->find();
+            foreach ($allPeople as $aPerson) {
                 $aPersonObject = new Person($this->clockworkObject,$currentGame);
                 $aPersonObject->fromJSON($aPerson);
                 $this->allPeopleArray[$aPerson->getMobileNumber()] = $aPerson;
