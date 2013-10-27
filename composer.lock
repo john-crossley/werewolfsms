@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "6b048010375d4bad50d8aca4d35bcb35",
+    "hash": "6c258facbd8e0d827028b1bf38af1627",
     "packages": [
         {
             "name": "behat/behat",
@@ -604,16 +604,16 @@
         },
         {
             "name": "slim/slim",
-            "version": "2.3.3",
+            "version": "2.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/codeguy/Slim.git",
-                "reference": "2952d3810a3f99256ea23142258f05f0c55e7a9e"
+                "reference": "fc8e18e6d1a5599a09ea0c45bf6ecd9ac843799b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/codeguy/Slim/zipball/2952d3810a3f99256ea23142258f05f0c55e7a9e",
-                "reference": "2952d3810a3f99256ea23142258f05f0c55e7a9e",
+                "url": "https://api.github.com/repos/codeguy/Slim/zipball/fc8e18e6d1a5599a09ea0c45bf6ecd9ac843799b",
+                "reference": "fc8e18e6d1a5599a09ea0c45bf6ecd9ac843799b",
                 "shasum": ""
             },
             "require": {
@@ -644,7 +644,7 @@
                 "rest",
                 "router"
             ],
-            "time": "2013-10-12 17:24:20"
+            "time": "2013-10-26 16:43:40"
         },
         {
             "name": "symfony/browser-kit",
