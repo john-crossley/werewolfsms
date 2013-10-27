@@ -59,7 +59,7 @@ class GameStorage {
 
     public function saveGame() {
         $currentGame = $this->getGame();
-        $gameAsJSON = $currentGame->toJason();
+        $gameAsJSON = $currentGame->toJSON();
         $this->gameCollection->findAndModify(array(),array('$set'=>$gameAsJSON),null,array('update'=>true,'new'=>false));
     }
 
