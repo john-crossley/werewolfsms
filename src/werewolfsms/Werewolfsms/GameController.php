@@ -75,7 +75,7 @@ class GameController
     {
         $yes = 0;
         $no = 0;
-        $this->votes[$who->getMobileNumber] = $guilty;
+        $this->votes[$who->getMobileNumber()] = $guilty;
         foreach ($this->votes as $vote)
         {
             if (is_null($vote))
