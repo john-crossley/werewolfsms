@@ -12,25 +12,35 @@ $clockwork = new \Clockwork\Clockwork(
     array('from' => 'WEREWOLFSMS')
 );
 
-$app->get('/register', function() use ($app) {
-    return $app->render('index.php', array(
-        'title' => 'This is the title'
+$app->get('/join-game', function() use ($app) {
+    return $app->render('joinnow.php', array(
+        'title' => 'Join Game '
     ));
 });
 
-$app->post('/register', function() use ($app) {
-    var_dump($_POST);
+$app->get('/learn-more',function()  use ($app){
+    
+    return $app->render('learnmore.php',array(
+        'title'=>'Learn More!'
+    ));
+
 });
 
 
-$app->get('/', function() use ($clockwork) {
+
+$app->get('/', function() {
+
+     // $clockwork = new \Clockwork\Clockwork(W\System::getApiKey(ROOT . 'api.json'), array('from' => 'WerewolfSMS'));
 
     try {
 
-        // Create a new instance of a person
-        $john = new W\Person($clockwork, $gameState);
-        $john->setName("John Crossley");
-        $john->setMobileNumber('07598935460');
+        // $john = new W\Person(W\Person::VILLAGER, 'John Crossley', '07598935460', $clockwork);
+
+        // $nick = new W\Person(W\Person::VILLAGER, 'Nicholas Mitchell', '07765150512', $clockwork);
+
+        // $person3 = new W\Person(W\Person::WEREWOLF, "Villager Three");
+
+        // var_dump( $nick->askForVote( $john ) );
 
         $nick = new W\Person($clockwork, new $gameState);
         $nick->setName("Nicholas Mitchell");
