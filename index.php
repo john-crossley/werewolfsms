@@ -78,7 +78,7 @@ $app->get('/cron', function () {
     /*$storage = new W\GameStorage($clockwork);
     $game = $storage->getGame();
     $game->tick();*/
-    $serverstring = System::getConnectionString(ROOT . 'config.json');
+    $serverstring = W\System::getConnectionString(ROOT . 'config.json');
     $mongoDbConnection = new \MongoClient($serverstring);
     $mongoDatabase = $mongoDbConnection->werewolfsms;
     $aCollection = $mongoDatabase->cron;
@@ -95,7 +95,7 @@ $app->get('/cron', function () {
 });
 
 $app->get('/lastcron', function() {
-    $serverstring = System::getConnectionString(ROOT . 'config.json');
+    $serverstring = W\System::getConnectionString(ROOT . 'config.json');
     $mongoDbConnection = new \MongoClient($serverstring);
     $mongoDatabase = $mongoDbConnection->werewolfsms;
     $aCollection = $mongoDatabase->cron;
