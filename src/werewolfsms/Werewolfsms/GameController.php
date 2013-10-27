@@ -256,9 +256,10 @@ class GameController
             {
                 $person->gameEnded($this->endGame);
             }
+            break;
 
         default:
-            throw \Exception("State machine borked");
+            throw new \Exception("State machine borked");
         }
         $this->phase = $newPhase;
     }
