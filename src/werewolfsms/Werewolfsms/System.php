@@ -6,9 +6,9 @@ class System {
 
     public static function withDefault($ar, $key, $default)
     {
-        if (array_key_exists($key, $ar))
+        if (is_array($ar) && array_key_exists($key, $ar))
         {
-            return ar[$key];
+            return $ar[$key];
         }
         else
         {

@@ -19,7 +19,9 @@ class SMSReceipt {
         $fromPerson = $game->toPerson($from);
         $content = $app->request->post('content');
 
-        list($keyword,$restOfContent) = explode(' ',$content,2);
+        $hold = explode(' ',$content,2);
+        $keyword = System::withDefault($hold,0,'');
+        $restOfContent = System::withDefault($hold,1,'');
 
         switch (strtolower($keyword)) {
             case 'vote' :
@@ -50,6 +52,8 @@ class SMSReceipt {
                 break;
             case 'again' :
                 $game->resetGame();
+                break;
+            case 'noop' :
                 break;
         }
     }

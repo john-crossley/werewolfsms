@@ -9,7 +9,7 @@ $app = new Slim\Slim;
 
 $clockwork = new \Clockwork\Clockwork(
     W\System::getApiKey(ROOT . 'config.json'),
-    array('from' => '+447860033041')
+    array('from' => '447860033041')
 );
 
 $app->container->singleton('storage', function () use ($clockwork) {

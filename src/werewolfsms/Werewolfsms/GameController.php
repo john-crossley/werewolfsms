@@ -8,9 +8,6 @@ class GameController
     const NIGHT_WOLF = "NIGHT_WOLF";
     const DAY_DISCUSS = "DAY_DISCUSS";
     const DAY_NOMINATED = "DAY_NOMINATED";
-    const DAY_ARG1 = "DAY_ARG1";
-    const DAY_ARG2 = "DAY_ARG2";
-    const DAY_DEFEND = "DAY_DEFEND";
     const DAY_VOTE = "DAY_VOTE";
 
     private $storage  = null;
@@ -131,7 +128,7 @@ class GameController
             throw new \Exception("We already have a second");
         }
         $this->seconder = $who;
-        $this->enterPhase(self::DAY_ARG1);
+        $this->enterPhase(self::DAY_VOTE);
     }
 
     /* Person API???
@@ -168,26 +165,6 @@ class GameController
             }
         }
         return $wolves;
-    }
-
-    public function argument($who)
-    {
-        if ($this->phase == self::DAY_ARG1 && $who->isMe($this->nominator))
-        {
-            $this->enterPhase(self::DAY_ARG2);
-        }
-        else if ($this->phase == self::DAY_ARG2 && $who->isMe($this->seconder))
-        {
-            $this->enterPhase(self::DAY_DEFEND);
-        }
-        else if ($this->phase == self::DAY_DEFEND && $who->isMe($this->seconder))
-        {
-            $this->enterPhase(self::DAY_VOTE);
-        }
-        else
-        {
-            throw new \Exception("Whu?");
-        }
     }
 
     public function enterPhase($newPhase)
@@ -228,18 +205,6 @@ class GameController
                     $person->askForSeconder($this->accused);
                 }
             }
-            break;
-
-        case self::DAY_ARG1:
-            $this->nominator->askForReasoning(Person::NOMINATE);
-            break;
-
-        case self::DAY_ARG2:
-            $this->nominator->askForReasoning(Person::SECOND);
-            break;
-
-        case self::DAY_DEFEND:
-            $this->nominator->askForReasoning(Person::DEFEND);
             break;
 
         case self::DAY_VOTE:
@@ -318,7 +283,7 @@ class GameController
         $this->seconder = $this->toPerson(System::withDefault($ar, "seconder", null));
         $this->accused = $this->toPerson(System::withDefault($ar, "accused", null));
         $this->victim = $this->toPerson(System::withDefault($ar, "victim", null));
-        $this->votes = System::withDefault($ar, "votes", null);
+        $this->votes = System::withDefault($ar, "votes", array());
         $this->wolfVotes = [];
         $wolfVotes = System::withDefault($ar, "wolfVotes", []);
         foreach ($wolfVotes as $wnum => $victim)
@@ -389,7 +354,7 @@ class GameController
                     'alive' => true,
                     'role' => null
                 )
-            ));
+            ,true));
         }
     }
 }

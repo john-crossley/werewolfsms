@@ -60,17 +60,24 @@ class GameStorage {
     public function saveGame() {
         $currentGame = $this->getGame();
         $gameAsJSON = $currentGame->toJSON();
-        $this->gameCollection->findAndModify(array(),array('$set'=>$gameAsJSON),null,array('update'=>true,'new'=>false));
+        $doc = $this->gameCollection->findOne();
+        if (is_null($doc)) {
+            $doc = array("phase" => GameController::PRE_GAME);
+            $this->gameCollection->insert($doc);
+        }
+        $this->gameCollection->findAndModify(null,json_decode($gameAsJSON, true));
     }
 
     public function savePeople() {
         foreach ($this->allPeopleArray as $person) {
-            $this->peopleCollection->findAndModify(
-                array('mobileNumber'=>$person->getMobileNumber()),
-                array('$set'=>$person->toJSON()),
-                null,
-                array('update'=>true,'upsert'=>true,'new'=>false)
-            );
+            $criteria = array('mobileNumber'=>$person->getMobileNumber());
+            $doc = $this->peopleCollection->findOne($criteria);
+            if (is_null($doc)) {
+                $this->peopleCollection->insert($criteria);
+            }
+            $newdoc = json_decode($person->toJSON(),true);
+            unset($newdoc['_id']);
+            $this->peopleCollection->findAndModify($criteria, $newdoc);
         }
     }
 

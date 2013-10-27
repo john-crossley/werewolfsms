@@ -122,7 +122,7 @@ class Person
      */
     public function getMobileNumber()
     {
-        if (array_key_exists('mobilenumber', $this->personState)) {
+        if (array_key_exists('mobileNumber', $this->personState)) {
             return $this->personState['mobileNumber'];
         } else {
             return null;
