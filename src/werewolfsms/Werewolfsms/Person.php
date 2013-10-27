@@ -212,11 +212,8 @@ class Person
 
     public function voteResult(Person $victim, $wasKilled, Array $people)
     {
-        //TODO: FIX THIS
-        $message = '';
         $wantedToLynch = array();
-        $didNotWatchToLynch = array();
-        $contactNumbers = array();
+        $didNotWantToLynch = array();
 
         if (!$wasKilled) {
             $message = 'The Lynching did not pass, discussion will continue...';
@@ -225,28 +222,29 @@ class Person
             return;
         } else {
 
+            $message = 'Night fall is here, please go to sleep.';
+
+            $message .= $victim->getName() . ' has been Lynched!' . "\n";
+        }
+
             // If the person was not killed, let everyone know
             // that the lynching did not pass.
-            foreach ($people as $mobile => $votedLynch) {
+            foreach ($people as $mobile => $playerVote) {
 
                 $personData = $this->gameState->toPerson($mobile);
                 $currentName = $personData->personState['name'];
 
-                if ($currentName == $victim->getName()) {
+                if ($victim->isMe($personData)) {
                     continue;
                 }
 
-                if ($votedLynch) {
+                if ($playerVote) {
                     array_push($wantedToLynch, $currentName);
                 } else {
-                    array_push($didNotWatchToLynch, $currentName);
+                    array_push($didNotWantToLynch, $currentName);
                 }
 
             }
-
-            $message = 'Night fall is here, please go to sleep.';
-
-            $message .= $victim->getName() . ' has been Lynched!' . "\n";
 
             // Build the message
             if (!empty($wantedToLynch)) {
@@ -254,12 +252,11 @@ class Person
                 $message .= ' chose to lynch. ';
             }
 
-            if (!empty($didNotWatchToLynch)) {
-                $message .= implode(', ', $didNotWatchToLynch);
+            if (!empty($didNotWantToLynch)) {
+                $message .= implode(', ', $didNotWantToLynch);
                 $message .= ' chose not to lynch. ';
             }
 
-        }
         $this->contactPerson($this->getMobileNumber(), $message);
 
     }
