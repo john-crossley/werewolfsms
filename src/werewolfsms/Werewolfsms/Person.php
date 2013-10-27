@@ -198,37 +198,59 @@ class Person {
 
     public function voteResult(Person $person, $wasKilled, Array $people)
     {
-        // The person in question.
-        $name = $person->getName();
         $message = '';
+        $wantedToLynch = array();
+        $didNotWatchToLynch = array();
+        $contactNumbers = array();
 
-        // Was the person killed?
-        if ($wasKilled) {
-            $person->personState->alive = false;
-            $person->personState->deathBy = 'Death by Lynching';
-            $person->contactPerson($person->getMobileNumber(), 'The villagers have decided to lynch you!');
-            return true;
+        foreach ($people as $mobile => $votedLynch) {
+
+            // If the person was not killed, let everyone know
+            // that the lynching did not pass.
+            if (!$wasKilled) {
+                $message = 'The Lynching did not pass, discussion will continue...';
+                $this->contactPerson($mobile, $message);
+                continue;
+            }
+
+            $currentName = $this->gameState->toPerson($mobile)->personState->name;
+
+            if ($currentName == $person->getName()) continue;
+
+            if ($votedLynch) {
+                array_push($wantedToLynch, $currentName);
+            } else {
+                array_push($didNotWatchToLynch, $currentName);
+            }
+
+            $contactNumbers[] = $mobile;
+
         }
 
-        // Now build up the results.
+        $message = $person->getName() . ' has been Lynched!' . "\n";
 
-        $personData = $this->gameState->toPerson('07765150512');
-
-        var_dump($personData);
-
-        foreach ($people as $mobileNumber => $votedToKill) {
-            // Get the person data from their mobile number
-
-
-            // die(var_dump($this->gameState));
-
-//            $message .= $personData->name;
-//            $message .= ' voted, ';
-//            $message .= ($votedToKill) ? 'to kill ' : 'not to kill ';
-//            $message .= $person->getName();
-//            $message .= "\n";
+        // Build the message
+        if (!empty($wantedToLynch)) {
+            $message .= implode(', ', $wantedToLynch);
+            $message .= ' chose to lynch. ';
         }
 
+        if (!empty($didNotWatchToLynch)) {
+            $message .= implode(', ', $didNotWatchToLynch);
+            $message .= ' chose not to lynch. ';
+        }
+
+         $this->bulkSendSms($contactNumbers, $message);
+
+    }
+
+    private function bulkSendSms(array $contactNumbers, $message)
+    {
+        foreach ($contactNumbers as $number)
+        {
+            $this->contactPerson($number, $message);
+        }
+        return true;
     }
 
     /**

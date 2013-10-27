@@ -19,7 +19,7 @@ $app->get('/join-game', function() use ($app) {
 });
 
 $app->get('/learn-more',function()  use ($app){
-    
+
     return $app->render('learnmore.php',array(
         'title'=>'Learn More!'
     ));
@@ -33,32 +33,23 @@ $app->get('/', function() use ($clockwork) {
     $storage = new W\GameStorage($clockwork);
     $game = $storage->getGame();
 
-     // $clockwork = new \Clockwork\Clockwork(W\System::getApiKey(ROOT . 'api.json'), array('from' => 'WerewolfSMS'));
-
     try {
-
-        // $john = new W\Person(W\Person::VILLAGER, 'John Crossley', '07598935460', $clockwork);
-
-        // $nick = new W\Person(W\Person::VILLAGER, 'Nicholas Mitchell', '07765150512', $clockwork);
-
-        // $person3 = new W\Person(W\Person::WEREWOLF, "Villager Three");
-
-        // var_dump( $nick->askForVote( $john ) );
 
         $nick = new W\Person($clockwork, $game);
         $nick->setName("Nicholas Mitchell");
         $nick->setMobileNumber('07765150512');
 
         $john = new W\Person($clockwork, $game);
-        $john->setName("Nicholas Mitchell");
-        $john->setMobileNumber('07765150512');
+        $john->setName("John Crossley");
+        $john->setMobileNumber('07598935460');
 
-//        die($john->toJSON());
 
         // This means nick was killed
-        $john->voteResult($nick, false, array(
-            '07598935460' => false,
-            '07765150512' => true
+        $john->voteResult($nick, true, array(
+            '07598935460' => true,
+            // '07765150512' => true,
+           '00000000000' => false,
+           '07777777777' => true
         ));
 
 
