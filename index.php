@@ -12,6 +12,10 @@ $clockwork = new \Clockwork\Clockwork(
     array('from' => 'WEREWOLFSMS')
 );
 
+$app->container->singleton('storage', function () use ($clockwork) {
+    return new W\GameStorage($clockwork);
+});
+
 $app->get('/join-game', function() use ($app) {
     return $app->render('joinnow.php', array(
         'title' => 'Join Game '
@@ -28,10 +32,9 @@ $app->get('/learn-more',function()  use ($app){
 
 
 
-$app->get('/', function() use ($clockwork) {
+$app->get('/', function() use ($app,$clockwork) {
 
-    $storage = new W\GameStorage($clockwork);
-    $game = $storage->getGame();
+    $game = $app->storage->getGame();
 
     try {
 
@@ -62,33 +65,31 @@ $app->get('/', function() use ($clockwork) {
 
 });
 
-$app->get('/people', function() use ($clockwork) {
-    $storage = new W\GameStorage($clockwork);
-    foreach ($storage->getAllPeople() as $person) {
+$app->get('/people', function() use ($app) {;
+    foreach ($app->storage->getAllPeople() as $person) {
         $jsonPeople[$person->getMobileNumber()] = json_decode($person->toJSON());
     }
     echo json_encode($jsonPeople);
 });
 
-$app->get('/people/alive', function() use ($clockwork) {
-    $storage = new W\GameStorage($clockwork);
-    $game = $storage->getGame();
+$app->get('/people/alive', function() use ($app) {
+    $game = $app->storage->getGame();
     $players = $game->getLivingPeople();
     echo json_encode($players);
 });
 
-$app->get('/cron', function () use ($clockwork)  {
-    $storage = new W\GameStorage($clockwork);
-    $game = $storage->getGame();
+$app->get('/cron', function () use ($app)  {
+    $game = $app->storage->getGame();
     $game->tick();
 });
 
-$app->post('/sms', function() use ($clockwork,$app)  {
+$app->post('/sms', function() use ($app)  {
     $handler = new W\SMSReceipt();
-    $storage = new W\GameStorage($clockwork);
-    $game = $storage->getGame();
+    $game = $app->storage->getGame();
     $handler->processSMS($app, $game);
 
 });
 
 $app->run();
+$app->storage->saveEverything();
+
