@@ -28,7 +28,7 @@ $app->get('/learn-more',function()  use ($app){
 
 
 
-$app->get('/', function() {
+$app->get('/', function() use ($clockwork) {
 
      // $clockwork = new \Clockwork\Clockwork(W\System::getApiKey(ROOT . 'api.json'), array('from' => 'WerewolfSMS'));
 
