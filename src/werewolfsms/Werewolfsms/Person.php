@@ -140,6 +140,7 @@ class Person
     public function wake(Person $person = null)
     {
         if ($this->isMe($person)) {
+            $this->kill(self::KILL_BY_WEREWOLF);
             return;
         }
         if (!is_null($person)) {
@@ -147,7 +148,7 @@ class Person
         } else {
             $message = "It's the dawn of a new day. There is an werewolf in our midst! Discuss who you this this is.";
         }
-        return $this->contactPerson($person, $message);
+        return $this->contactPerson($this->getMobileNumber(), $message);
     }
 
     /**
