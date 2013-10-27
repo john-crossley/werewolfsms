@@ -17,6 +17,18 @@ class GameController
     const DAY_DEFEND = "DAY_DEFEND";
     const DAY_VOTE = "DAY_VOTE";
 
+    private $accused = null;
+    private $nominator = null;
+    private $storage  = null;
+    private $victim = null;
+    private $people = [];
+    private $phase = null;
+    private $nominator = null;
+    private $seconder = null;
+    private $accused = null;
+    private $votes = [];
+    private $wolfVotes = [];
+
     public function __construct($storage)
     {
         $this->storage = $storage;
@@ -103,7 +115,7 @@ class GameController
 
     public function nominate($who, $accused)
     {
-        if (!is_null($this->$accused))
+        if (!is_null($this->accused))
         {
             throw new Exception($this->accused->friendlyName() . " has already been nominateed");
         }
@@ -114,7 +126,7 @@ class GameController
 
     public function second($who)
     {
-        if (is_null($this->$accused))
+        if (is_null($this->accused))
         {
             throw new \Exception("Nobody has been nominated");
         }
@@ -264,7 +276,9 @@ class GameController
         foreach ($this->getLivingPeople() as $person)
         {
             if ($person->getName() == $name)
-                return $person
+            {
+                return $person;
+            }
         }
         return null;
     }
@@ -287,10 +301,11 @@ class GameController
     {
         $ar = json_decode($json, true);
         $this->people = $this->storage->getAllPeople();
-        // $this->phase = $this->$ar["phase"];
+        $this->phase = $this->$ar["phase"];
         $this->moninator = $this->toPerson($ar["nominator"]);
         $this->seconder = $this->toPerson($ar["seconder"]);
         $this->accused = $this->toPerson($ar["accused"]);
+        $this->victim = $this->toPerson($ar["victim"]);
         $this->votes = $ar["votes"];
         $this->wolfVotes = [];
         foreach ((array)$ar["wolfVotes"] as $wnum => $victim)
@@ -311,6 +326,7 @@ class GameController
             "nominator" => $this->fromPerson($this->nominator),
             "seconder" => $this->fromPerson($this->seconder),
             "accused" => $this->fromPerson($this->accused),
+            "victim" => $this->fromPerson($this->victim),
             "votes" => $this->votes,
             "wolfVotes" => $wolfVotes
         );
