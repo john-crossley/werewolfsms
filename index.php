@@ -28,7 +28,7 @@ $app->get('/learn-more',function()  use ($app){
 
 
 
-$app->get('/', function() {
+$app->get('/', function() use ($clockwork) {
 
     $storage = new W\GameStorage($clockwork);
     $game = $storage->getGame();
