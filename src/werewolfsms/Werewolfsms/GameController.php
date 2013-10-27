@@ -57,10 +57,8 @@ class GameController
         }
         else
         {
-            foreach ($this->getLivingPeople as $person)
+            foreach ($this->getLivingWolves() as $person)
             {
-                if ($person->role != Person::WEREWOLF)
-                    continue;
                 $person->askForKill(true);
             }
         }
@@ -114,15 +112,15 @@ class GameController
         $this->enterPhase(self::DAY_NOMINATED);
     }
 
-    public function second($who, $accused)
+    public function second($who)
     {
         if (is_null($this->$accused))
         {
-            throw new \Exception($who->friendlyName() . " has not been nominated");
+            throw new \Exception("Nobody has been nominated");
         }
         if (!is_null($this->seconder))
         {
-            throw new \Exception($this->accused->friendlyName() . " has already been seconded");
+            throw new \Exception("We already have a second");
         }
         $this->seconder = $who;
         $this->enterPhase(self::DAY_ARG1);
@@ -144,6 +142,19 @@ class GameController
         foreach ($this->people as $person)
         {
             if ($person->isAlive())
+            {
+                $alivePeople[] = $person;
+            }
+        }
+        return $alivePeople;
+    }
+
+    public function getLivingWolves()
+    {
+        $wolves = [];
+        foreach ($this->people as $person)
+        {
+            if ($person->isAlive() && $person->getRole() == Person::WEREWOLF)
             {
                 $alivePeople[] = $person;
             }
@@ -178,10 +189,8 @@ class GameController
         {
         case self::NIGHT_WOLF:
             $this->wolfVotes = []
-            foreach ($this->getLivingPeople() as $person)
+            foreach ($this->getLivingWolves() as $person)
             {
-                if ($person->role != Person::WEREWOLF)
-                    continue;
                 $person->askForKill(false);
                 $this->wolfVotes[$person->getMobileNumber()] = null;
             }
@@ -212,15 +221,15 @@ class GameController
             break;
 
         case self::DAY_ARG1:
-            $this->nominator->askForArgument(Person::NOMINATE);
+            $this->nominator->askForReasoning(Person::NOMINATE);
             break;
 
         case self::DAY_ARG2:
-            $this->nominator->askForArgument(Person::SECOND);
+            $this->nominator->askForReasoning(Person::SECOND);
             break;
 
         case self::DAY_DEFEND:
-            $this->nominator->askForArgument(Person::DEFEND);
+            $this->nominator->askForReasoning(Person::DEFEND);
             break;
 
         case self::DAY_VOTE:
@@ -278,8 +287,21 @@ class GameController
         return json_encode($ar);
     }
 
-    public function StartGame()
+    public function startGame()
     {
-        $this->phase = "WOLF_NIGHT";
+        $wolves = array_rand($this->getLivingPeople());
+
+        foreach ($wolves as $wnum)
+        {
+            $this->setRole(Person::WEREWOLF);
+        }
+        foreach ($this->getLivingPeople() as $person)
+        {
+            if (is_null($person->getRole))
+            {
+                $this->setRole(Person::VILLAGER);
+            }
+        }
+        $this->enterPhase(self::NIGHT_WOLF);
     }
 }
