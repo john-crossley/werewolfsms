@@ -84,7 +84,28 @@ $app->get('/people/alive', function() use ($clockwork) {
 });
 
 $app->get('/cron', function () {
-    echo "Hello World";
+    /*$storage = new W\GameStorage($clockwork);
+    $game = $storage->getGame();
+    $game->tick();*/
+    $mongoDbConnection = new \MongoClient;
+    $mongoDatabase = $mongoDbConnection->werewolfsms;
+    $aCollection = $mongoDatabase->cron;
+    $doc = $aCollection->findOne();
+    if ($doc == null) {
+        $doc['last_run'] = date('c');
+        $aCollection->insert($doc);
+    }
+    $doc = $aCollection->findOne();
+    $doc['last_run'] = date('c');
+    unset($doc['_id']);
+    $aCollection->findAndModify(null,$doc);
+});
+
+$app->get('/lastcron', function() {
+    $mongoDbConnection = new \MongoClient;
+    $mongoDatabase = $mongoDbConnection->werewolfsms;
+    $aCollection = $mongoDatabase->cron;
+    var_dump($aCollection->findOne());
 });
 
 $app->run();
