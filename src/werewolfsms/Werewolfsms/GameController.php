@@ -340,9 +340,24 @@ class GameController
         return json_encode($ar);
     }
 
+    private function numberOfWolves()
+    {
+        $villagers = count($this->people);
+        if ($villagers < 3) {
+            return 1;
+        }
+        if ($villagers < 12) {
+            return 2;
+        }
+        if ($villagers < 18) {
+            return 3;
+        }
+        return 4;
+    }
+
     public function startGame()
     {
-        $wolves = array_rand($this->people);
+        $wolves = array_rand($this->people, $this->numberOfWolves());
 
         foreach ($wolves as $wnum)
         {
