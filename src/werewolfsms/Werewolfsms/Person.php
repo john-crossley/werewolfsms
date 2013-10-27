@@ -21,14 +21,15 @@ class Person {
 
     // Stores the actual state
     // of the person object.
-    public $personState;
+    public $personState,
+           $gameState;
 
     /**
      * The Person constructor - Is called when its the start of a new game.
      *
      * @param \Clockwork\Clockwork $smsObject - Requires the SMS object.
      */
-    public function __construct(\Clockwork\Clockwork $smsObject)
+    public function __construct(\Clockwork\Clockwork $smsObject, $gameState)
     {
         $this->personState = new \stdClass();
 
@@ -40,6 +41,9 @@ class Person {
 
         // Set the sms object
         $this->smsObject = $smsObject;
+
+        // Game state
+        $this->gameState = $gameState;
     }
 
     /**
@@ -153,11 +157,11 @@ class Person {
      * @param $message The message to send to the person
      * @return string Success or failure information.
      */
-    private function contactPerson(Person $person, $message)
+    private function contactPerson($mobileNumber, $message)
     {
         try {
             return $this->smsObject->send(array(
-                'to' => $person->mobileNumber,
+                'to' => $mobileNumber,
                 'message' => $message
             ));
         } catch (ClockworkException $e) {
@@ -188,6 +192,36 @@ class Person {
         }
         $this->personState->alive = false;
         return $this->contactPerson($this, $message);
+    }
+
+
+
+    public function voteResult(Person $person, $wasKilled, Array $people)
+    {
+        // The person in question.
+        $name = $person->getName();
+        $message = '';
+
+        // Was the person killed?
+        if ($wasKilled) {
+            $person->personState->alive = false;
+            $person->personState->deathBy = 'Death by Lynching';
+            $person->contactPerson($person->getMobileNumber(), 'The villagers have decided to lynch you!');
+            return true;
+        }
+
+        // Now build up the results.
+
+        foreach ($people as $mobileNumber => $votedToKill) {
+            // Get the person data from their mobile number
+            $personData = $this->gameState->toPerson($mobileNumber);
+            $message .= $personData->getName();
+            $message .= ' voted, ';
+            $message .= ($votedToKill) ? 'to kill ' : 'not to kill ';
+            $message .= $person->getName();
+            $message .= "\n";
+        }
+
     }
 
     /**

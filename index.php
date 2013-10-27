@@ -22,33 +22,25 @@ $app->post('/register', function() use ($app) {
     var_dump($_POST);
 });
 
+
 $app->get('/', function() use ($clockwork) {
 
     try {
 
         // Create a new instance of a person
-        $john = new W\Person($clockwork);
+        $john = new W\Person($clockwork, $gameState);
         $john->setName("John Crossley");
         $john->setMobileNumber('07598935460');
 
-        // var_dump($person->kill(W\Person::KILL_BY_LYNCH));
+        $nick = new W\Person($clockwork, new $gameState);
+        $nick->setName("Nicholas Mitchell");
+        $nick->setMobileNumber('07765150512');
 
-        echo "<pre>";
-        print_r($john);
-        echo "</pre>";
-
-        $john->setConsciousness(W\Person::ASLEEP);
-        $j = $john->toJSON();
-
-
-        echo "<pre>";
-        print_r($j);
-        echo "</pre>";
-
-        echo "<pre>";
-        print_r($john->fromJSON($j));
-        echo "</pre>";
-
+        // This means nick was killed
+        $john->voteResult($nick, false, array(
+            '07598935460' => false,
+            '07765150512' => true
+        ));
 
 
     } catch (\Exception $e) {
@@ -57,8 +49,5 @@ $app->get('/', function() use ($clockwork) {
 
 });
 
-//$app->get('admin/', function() {
-//    $app->render('index.php', array('title' => 'Nicks Page'));
-//});
 
 $app->run();
