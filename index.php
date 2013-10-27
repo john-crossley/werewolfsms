@@ -71,7 +71,7 @@ $app->get('/', function() use ($clockwork) {
 $app->get('/people', function() use ($clockwork) {
     $storage = new W\GameStorage($clockwork);
     foreach ($storage->getAllPeople() as $person) {
-        $jsonPeople[$person->getMobileNumber()] = $person->toJSON();
+        $jsonPeople[$person->getMobileNumber()] = json_decode($person->toJSON());
     }
     echo json_encode($jsonPeople);
 });
