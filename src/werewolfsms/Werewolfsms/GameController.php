@@ -182,7 +182,7 @@ class GameController
 
     public function fromJSON($json)
     {
-        $ar = decode_json($json, true);
+        $ar = json_decode($json, true);
         $this->people = $this->storage->getAllPeople();
         $this->moninator = $this->toPerson($ar["nominator"]);
         $this->seconder = $this->toPerson($ar["seconder"]);

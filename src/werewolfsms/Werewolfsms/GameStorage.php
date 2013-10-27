@@ -22,7 +22,7 @@ class GameStorage {
 
     public function __construct(\Clockwork\Clockwork $clockworkObject)
     {
-        $this->mongoDbConnection = new MongoClient;
+        $this->mongoDbConnection = new \MongoClient;
         $this->mongoDatabase = $this->mongoDbConnection->compaxion;
         $this->gameCollection = $this->mongoDatabase->game;
         $this->peopleCollection = $this->mongoDatabase->people;
