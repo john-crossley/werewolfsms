@@ -212,14 +212,21 @@ class Person {
 
         // Now build up the results.
 
+        $personData = $this->gameState->toPerson('07765150512');
+
+        var_dump($personData);
+
         foreach ($people as $mobileNumber => $votedToKill) {
             // Get the person data from their mobile number
-            $personData = $this->gameState->toPerson($mobileNumber);
-            $message .= $personData->getName();
-            $message .= ' voted, ';
-            $message .= ($votedToKill) ? 'to kill ' : 'not to kill ';
-            $message .= $person->getName();
-            $message .= "\n";
+
+
+            // die(var_dump($this->gameState));
+
+//            $message .= $personData->name;
+//            $message .= ' voted, ';
+//            $message .= ($votedToKill) ? 'to kill ' : 'not to kill ';
+//            $message .= $person->getName();
+//            $message .= "\n";
         }
 
     }

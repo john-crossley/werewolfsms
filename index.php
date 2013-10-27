@@ -45,9 +45,15 @@ $app->get('/', function() use ($clockwork) {
 
         // var_dump( $nick->askForVote( $john ) );
 
-        $nick = new W\Person($clockwork, new $game);
+        $nick = new W\Person($clockwork, $game);
         $nick->setName("Nicholas Mitchell");
         $nick->setMobileNumber('07765150512');
+
+        $john = new W\Person($clockwork, $game);
+        $john->setName("Nicholas Mitchell");
+        $john->setMobileNumber('07765150512');
+
+//        die($john->toJSON());
 
         // This means nick was killed
         $john->voteResult($nick, false, array(
@@ -64,7 +70,10 @@ $app->get('/', function() use ($clockwork) {
 
 $app->get('/people', function() use ($clockwork) {
     $storage = new W\GameStorage($clockwork);
-    echo json_encode($storage->getAllPeople());
+    foreach ($storage->getAllPeople() as $person) {
+        $jsonPeople[$person->getMobileNumber()] = json_decode($person->toJSON());
+    }
+    echo json_encode($jsonPeople);
 });
 
 $app->get('/people/alive', function() use ($clockwork) {

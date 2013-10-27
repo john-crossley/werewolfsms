@@ -38,11 +38,11 @@ class GameStorage {
             $allPeople = $this->peopleCollection->find();
             foreach ($allPeople as $aPerson) {
                 $aPersonObject = new Person($this->clockworkObject,$currentGame);
-                $aPersonObject->fromJSON($aPerson);
-                $this->allPeopleArray[$aPerson->getMobileNumber()] = $aPerson;
+                $aPersonObject->fromJSON(json_encode($aPerson));
+                $this->allPeopleArray[$aPersonObject->getMobileNumber()] = $aPersonObject;
             }
-            return $this->allPeopleArray;
         }
+        return $this->allPeopleArray;
     }
 
     public function getGame()
@@ -51,7 +51,7 @@ class GameStorage {
             $currentGame = new GameController($this);
             $currentGameJson = $this->gameCollection->findOne();
             $this->currentGame = $currentGame;
-            $currentGame->fromJSON($currentGameJson);
+            $currentGame->fromJSON(json_encode($currentGameJson));
         }
         return $this->currentGame;
     }
