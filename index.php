@@ -47,8 +47,6 @@ $app->get('/', function() use ($clockwork) {
         $james->setName("James McAvady");
         $james->setMobileNumber("07709786024");
 
-        $john->askForArgument(W\Person::DEFEND, $james);
-
         // This means nick was killed
 //        $john->voteResult($nick, true, array(
 //            '07598935460' => true,

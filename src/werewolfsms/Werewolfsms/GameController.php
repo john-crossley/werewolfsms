@@ -35,7 +35,7 @@ class GameController
     {
         $wnum = $who->getMobileNumber();
         if (array_key_exists($wnum, $this->wolfVotes))
-            throw Exception("You are not a wolf")
+            throw Exception("You are not a wolf");
         $this->wolfVotes[$who->getMobileNumber()] = $victim;
         $agree = true;
         foreach ($this->wolfVotes as $other)
@@ -46,10 +46,10 @@ class GameController
             }
             if (!same_person($other, $victim))
             {
-                agree = false;
+                $agree = false;
             }
         }
-        if (agree)
+        if ($agree)
         {
             $this->wolfVotes = [];
             $this->victim = $victim;
@@ -87,7 +87,7 @@ class GameController
             $yes += 1;
         }
         $dead = $yes > $no;
-        for ($this->getLivingPeople() as $person)
+        foreach ($this->getLivingPeople() as $person)
         {
             $person->voteResult($this->accused, $dead, $this->votes);
         }
@@ -188,7 +188,7 @@ class GameController
         switch ($newphase)
         {
         case self::NIGHT_WOLF:
-            $this->wolfVotes = []
+            $this->wolfVotes = [];
             foreach ($this->getLivingWolves() as $person)
             {
                 $person->askForKill(false);
@@ -263,7 +263,7 @@ class GameController
         $this->accused = $this->toPerson($ar["accused"]);
         $this->votes = $ar["votes"];
         $this->wolfVotes = [];
-        foreach ($ar["wolfVotes"] as $wnum => $victim)
+        foreach ((array)$ar["wolfVotes"] as $wnum => $victim)
         {
             $this->wolfVotes[$wnum] = $this->toPerson($victim);
         }
@@ -272,7 +272,7 @@ class GameController
     public function toJSON()
     {
         $wolfVotes = [];
-        foreach ($this->wolfVotes as $wnum, $victim)
+        foreach ($this->wolfVotes as $wnum => $victim)
         {
             $wolfVotes[$wnum] = $victim->getMobileNumber();
         }
