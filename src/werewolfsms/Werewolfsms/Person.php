@@ -68,6 +68,10 @@ class Person
 //        $this->id = $person->_id;
     }
 
+    public function getRole() {
+        return $this->personState['role'];
+    }
+
     public function setRole($role)
     {
         if (self::VILLAGER === $role) {
@@ -207,6 +211,13 @@ class Person
                     "Please defend your yourself against these accusations...");
                 break;
         }
+    }
+
+
+    public function askForKill($ignoredsofar)
+    {
+                $this->contactPerson($this->getMobileNumber(),
+                    "You are a werewolf, please pick somebody to kill");
     }
 
 

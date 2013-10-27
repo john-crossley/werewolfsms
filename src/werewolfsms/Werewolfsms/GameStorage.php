@@ -30,20 +30,17 @@ class GameStorage {
         $this->clockworkObject = $clockworkObject;
     }
 
-    public function getAllPeople()
+    public function readPeopleDb()
     {
         /* This call (getGame()) will call this function (getAllPeople), but once in this function
           will use the cached version it creates and will therefore not be infinite. */
         $currentGame = $this->getGame();
-        if (is_null($this->allPeopleArray)) {
-            $allPeople = $this->peopleCollection->find();
-            foreach ($allPeople as $aPerson) {
-                $aPersonObject = new Person($this->clockworkObject,$currentGame);
-                $aPersonObject->fromJSON(json_encode($aPerson));
-                $this->allPeopleArray[$aPersonObject->getMobileNumber()] = $aPersonObject;
-            }
+        $allPeople = $this->peopleCollection->find();
+        foreach ($allPeople as $aPerson) {
+            $aPersonObject = new Person($this->clockworkObject,$currentGame);
+            $aPersonObject->fromJSON(json_encode($aPerson));
+            $currentGame->insertPerson($aPersonObject);
         }
-        return $this->allPeopleArray;
     }
 
     public function getGame()
@@ -69,7 +66,7 @@ class GameStorage {
     }
 
     public function savePeople() {
-        foreach ($this->allPeopleArray as $person) {
+        foreach ($this->getGame()->getAllPeople() as $person) {
             $criteria = array('mobileNumber'=>$person->getMobileNumber());
             $doc = $this->peopleCollection->findOne($criteria);
             if (is_null($doc)) {

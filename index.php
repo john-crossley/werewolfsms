@@ -62,7 +62,7 @@ $app->get('/', function() use ($app,$clockwork) {
 });
 
 $app->get('/people', function() use ($app) {;
-    foreach ($app->storage->getAllPeople() as $person) {
+    foreach ($app->storage->getGame->getAllPeople() as $person) {
         $jsonPeople[$person->getMobileNumber()] = json_decode($person->toJSON());
     }
     echo json_encode($jsonPeople);

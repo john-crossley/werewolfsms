@@ -39,8 +39,8 @@ class GameController
     public function voteWolf($who, $victim)
     {
         $wnum = $who->getMobileNumber();
-        if (array_key_exists($wnum, $this->wolfVotes))
-            throw \Exception("You are not a wolf");
+        if (!array_key_exists($wnum, $this->wolfVotes))
+            throw new \Exception("You are not a wolf");
         $this->wolfVotes[$who->getMobileNumber()] = $victim;
         $agree = true;
         foreach ($this->wolfVotes as $other)
@@ -141,6 +141,11 @@ class GameController
     *Argue
      */
 
+    public function getAllPeople()
+    {
+        return $this->people;
+    }
+
     public function getLivingPeople()
     {
         $alivePeople = [];
@@ -169,9 +174,9 @@ class GameController
 
     public function enterPhase($newPhase)
     {
-        if ($newPhase != $this->phase)
+        if ($newPhase == $this->phase)
         {
-            throw \Exception("State machine borked");
+            throw new \Exception("State machine borked");
         }
         switch ($newPhase)
         {
@@ -185,7 +190,7 @@ class GameController
             break;
 
         case self::DAY_DISCUSS:
-            if (is_null($this->victim))
+            if (!is_null($this->victim))
             {
                 foreach ($this->getLivingPeople() as $person)
                 {
@@ -217,6 +222,7 @@ class GameController
         default:
             throw \Exception("State machine borked");
         }
+        $this->phase = $newPhase;
     }
 
     public function registerPerson($num, $name)
@@ -233,6 +239,7 @@ class GameController
         $person = new Person($this->smsObject, $this);
         $person->setMobileNumber($num);
         $person->setName($name);
+        $this->insertPerson($person);
     }
 
     public function getPersonByName($name)
@@ -266,7 +273,7 @@ class GameController
         {
             return null;
         }
-        return $this->getMobileNumber();
+        return $person->getMobileNumber();
     }
 
     public function tick()
@@ -274,10 +281,16 @@ class GameController
         /* tock */
     }
 
+    public function insertPerson(Person $person)
+    {
+        $this->people[$person->getMobileNumber()] = $person;
+    }
+
     public function fromJSON($json)
     {
         $ar = json_decode($json, true);
-        $this->people = $this->storage->getAllPeople();
+        $this->people = array();
+        $this->storage->readPeopleDb();
         $this->phase = System::withDefault($ar, "phase", self::PRE_GAME);
         $this->moninator = $this->toPerson(System::withDefault($ar, "nominator", null));
         $this->seconder = $this->toPerson(System::withDefault($ar, "seconder", null));
@@ -297,7 +310,7 @@ class GameController
         $wolfVotes = [];
         foreach ($this->wolfVotes as $wnum => $victim)
         {
-            $wolfVotes[$wnum] = $victim->getMobileNumber();
+            $wolfVotes[$wnum] = $this->fromPerson($victim);
         }
         $ar = array(
             "phase" => $this->phase,
@@ -329,6 +342,9 @@ class GameController
     public function startGame()
     {
         $wolves = array_rand($this->people, $this->numberOfWolves());
+        if (!is_array($wolves)) {
+            $wolves = array($wolves);
+        }
 
         foreach ($wolves as $wnum)
         {
@@ -336,9 +352,9 @@ class GameController
         }
         foreach ($this->getLivingPeople() as $person)
         {
-            if (is_null($person->getRole))
+            if (is_null($person->getRole()))
             {
-                $this->setRole(Person::VILLAGER);
+                $person->setRole(Person::VILLAGER);
             }
         }
         $this->enterPhase(self::NIGHT_WOLF);
