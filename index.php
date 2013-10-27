@@ -78,7 +78,8 @@ $app->get('/cron', function () {
     /*$storage = new W\GameStorage($clockwork);
     $game = $storage->getGame();
     $game->tick();*/
-    $mongoDbConnection = new \MongoClient;
+    $serverstring = System::getConnectionString(ROOT . 'config.json');
+    $mongoDbConnection = new \MongoClient($serverstring);
     $mongoDatabase = $mongoDbConnection->werewolfsms;
     $aCollection = $mongoDatabase->cron;
     $doc = $aCollection->findOne();
@@ -94,7 +95,8 @@ $app->get('/cron', function () {
 });
 
 $app->get('/lastcron', function() {
-    $mongoDbConnection = new \MongoClient;
+    $serverstring = System::getConnectionString(ROOT . 'config.json');
+    $mongoDbConnection = new \MongoClient($serverstring);
     $mongoDatabase = $mongoDbConnection->werewolfsms;
     $aCollection = $mongoDatabase->cron;
     var_dump($aCollection->findOne());

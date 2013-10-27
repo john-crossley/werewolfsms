@@ -22,7 +22,8 @@ class GameStorage {
 
     public function __construct(\Clockwork\Clockwork $clockworkObject)
     {
-        $this->mongoDbConnection = new \MongoClient;
+        $serverstring = System::getConnectionString(ROOT . 'config.json');
+        $this->mongoDbConnection = new \MongoClient($serverstring);
         $this->mongoDatabase = $this->mongoDbConnection->werewolfsms;
         $this->gameCollection = $this->mongoDatabase->game;
         $this->peopleCollection = $this->mongoDatabase->people;
