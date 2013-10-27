@@ -290,6 +290,10 @@ class GameController
         {
             return null;
         }
+        if (!array_key_exists($val, $this->people))
+        {
+            return null;
+        }
         return $this->people[$val];
     }
 
