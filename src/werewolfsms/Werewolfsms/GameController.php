@@ -201,10 +201,9 @@ class GameController
             {
                 foreach ($this->getLivingPeople() as $person)
                 {
-                    if ($person->consciousness() == Person::AWAKE)
-                        continue;
                     $person->wake($this->victim);
                 }
+                $this->victim = null;
             }
             break;
 
