@@ -74,4 +74,8 @@ $app->get('/people/alive', function() use ($clockwork) {
     echo json_encode($players);
 });
 
+$app->get('/cron', function () {
+    echo "Hello World";
+});
+
 $app->run();
