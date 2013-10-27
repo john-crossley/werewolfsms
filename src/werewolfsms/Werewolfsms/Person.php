@@ -93,6 +93,8 @@ class Person {
     public function setName($name)
     {
         $this->personState->name = strip_tags($name);
+        $this->contactPerson($this->getMobileNumber(),
+            'Hello ' . $name . ' and welcome to the game! Further instructions will follow...');
     }
 
     /**
