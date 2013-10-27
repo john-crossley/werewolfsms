@@ -31,8 +31,10 @@ class GameStorage {
 
     public function getAllPeople()
     {
+        /* This call (getGame()) will call this function (getAllPeople), but once in this function
+          will use the cached version it creates and will therefore not be infinite. */
+        $currentGame = $this->getGame();
         if (is_null($this->allPlayers)) {
-            $currentGame = $this->getGame();
             $allPlayers = $this->playerCollection->find();
             foreach ($allPlayers as $aPerson) {
                 $aPersonObject = new Person($this->clockworkObject,$currentGame);
