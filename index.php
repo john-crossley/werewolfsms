@@ -70,6 +70,7 @@ $app->get('/', function() use ($clockwork) {
 
 $app->get('/people', function() use ($clockwork) {
     $storage = new W\GameStorage($clockwork);
+    var_dump($storage->getAllPeople());
     echo json_encode($storage->getAllPeople());
 });
 
