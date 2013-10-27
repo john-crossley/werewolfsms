@@ -99,6 +99,7 @@ $app->get('/cron', function () {
     $doc['last_run'] = date('c');
     unset($doc['_id']);
     $aCollection->findAndModify(null,$doc);
+    var_dump($doc);
 });
 
 $app->get('/lastcron', function() {
