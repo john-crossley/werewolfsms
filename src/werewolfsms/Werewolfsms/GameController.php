@@ -244,6 +244,32 @@ class GameController
         }
     }
 
+    public function registerPerson($num, $name)
+    {
+        $person = $this->getPersonByName($name);
+        if (!is_null($person))
+            return;
+        $person = $this->toPerson($num);
+        if (!is_null($person))
+        {
+            $person->setName($name);
+            return;
+        }
+        $person = new Person($this->smsObject, $this);
+        $person->setMobileNumber($num);
+        $person->setName($name);
+    }
+
+    public function getPersonByName($name)
+    {
+        foreach ($this->getLivingPeople() as $person)
+        {
+            if ($person->getName() == $name)
+                return $person
+        }
+        return null;
+    }
+
     public function toPerson($val)
     {
         if (is_null($val))
@@ -251,6 +277,11 @@ class GameController
             return null;
         }
         return $this->people[$val];
+    }
+
+    public function tick()
+    {
+        /* tock */
     }
 
     public function fromJSON($json)
