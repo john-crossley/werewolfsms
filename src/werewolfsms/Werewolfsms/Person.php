@@ -151,6 +151,10 @@ class Person
         return $this->contactPerson($this->getMobileNumber(), $message);
     }
 
+    public function gameEnded($winTeam) {
+        $message = "The game is over - the $winTeam won!";
+        $this->contactPerson($this->getMobileNumber(), $message);
+    }
     /**
      * Send a message to a person object.
      *
@@ -217,8 +221,22 @@ class Person
 
     public function askForKill($ignoredsofar)
     {
-                $this->contactPerson($this->getMobileNumber(),
-                    "You are a werewolf, please pick somebody to kill");
+        $this->contactPerson($this->getMobileNumber(),
+            "You are a werewolf, please pick somebody to kill");
+    }
+
+
+    public function askForSeconder($accused)
+    {
+        $this->contactPerson($this->getMobileNumber(),
+            "Do you want to second {$accused->getName()}?");
+    }
+
+
+    public function askForVote($accused)
+    {
+        $this->contactPerson($this->getMobileNumber(),
+            "Do you want to LYNCH or SAVE {$accused->getName()}? Type VOTE and the word.");
     }
 
 

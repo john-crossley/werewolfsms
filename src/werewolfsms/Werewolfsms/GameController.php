@@ -9,6 +9,7 @@ class GameController
     const DAY_DISCUSS = "DAY_DISCUSS";
     const DAY_NOMINATED = "DAY_NOMINATED";
     const DAY_VOTE = "DAY_VOTE";
+    const END_GAME = "END_GAME";
 
     private $storage  = null;
     private $victim = null;
@@ -20,6 +21,7 @@ class GameController
     private $votes = [];
     private $wolfVotes = [];
     private $smsObject = null;
+    private $endGame = null;
 
     public function __construct($storage, $smsObject)
     {
@@ -73,7 +75,7 @@ class GameController
     {
         $yes = 0;
         $no = 0;
-        $this->votes[$who] = $guilty;
+        $this->votes[$who->getMobileNumber] = $guilty;
         foreach ($this->votes as $vote)
         {
             if (is_null($vote))
@@ -97,6 +99,10 @@ class GameController
             $person->voteResult($this->accused, $dead, $this->votes);
         }
         $this->votes = [];
+        if ($this->checkEndGame()) {
+            $this->enterPhase(self::END_GAME);
+            return;
+        }
         if ($dead) {
             $this->enterPhase(self::NIGHT_WOLF);
         }
@@ -172,6 +178,28 @@ class GameController
         return $wolves;
     }
 
+    private function checkEndGame()
+    {
+        $wolfCount = 0;
+        $villagerCount = 0;
+        foreach ($this->getLivingPeople() as $person) {
+            if ($person->getRole() == Person::WEREWOLF) {
+                $wolfCount++;
+            } else {
+                $villagerCount++;
+            }
+        }
+        if ($wolfCount != 0 && $villagerCount != 0 ) {
+            return false;
+        }
+        if ($wolfCount == 0) {
+            $this->endGame = Person::VILLAGER;
+        } else {
+            $this->endGame = Person::WEREWOLF;
+        }
+        return true;
+    }
+
     public function enterPhase($newPhase)
     {
         if ($newPhase == $this->phase)
@@ -197,6 +225,10 @@ class GameController
                     $person->wake($this->victim);
                 }
                 $this->victim = null;
+                if ($this->checkEndGame()) {
+                    $this->enterPhase(self::END_GAME);
+                    return;
+                }
             }
             break;
 
@@ -204,8 +236,8 @@ class GameController
             $this->resetVotes();
             foreach ($this->getLivingPeople() as $person)
             {
-                if ($person->isMe($this->accused)
-                    || $person->isMe($this->nominator))
+                if (!($person->isMe($this->accused)
+                    || $person->isMe($this->nominator)))
                 {
                     $person->askForSeconder($this->accused);
                 }
@@ -218,6 +250,12 @@ class GameController
                 $person->askForVote($this->accused);
             }
             break;
+
+        case self::END_GAME:
+            foreach ($this->getAllPeople() as $person)
+            {
+                $person->gameEnded($this->endGame);
+            }
 
         default:
             throw \Exception("State machine borked");

@@ -36,6 +36,7 @@ class SMSReceipt {
             case 'nominate' :
                 $nominee = $game->getPersonByName($restOfContent);
                 $game->nominate($fromPerson, $nominee);
+                break;
             case 'second' :
                 $game->second($fromPerson);
                 break;
