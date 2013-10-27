@@ -184,7 +184,7 @@ class GameController
     {
         $ar = json_decode($json, true);
         $this->people = $this->storage->getAllPeople();
-        $this->phase = $this->$ar["phase"];
+        // $this->phase = $this->$ar["phase"];
         $this->moninator = $this->toPerson($ar["nominator"]);
         $this->seconder = $this->toPerson($ar["seconder"]);
         $this->accused = $this->toPerson($ar["accused"]);

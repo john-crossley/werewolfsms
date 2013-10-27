@@ -53,6 +53,8 @@ $app->get('/', function() use ($clockwork) {
         $john->setName("Nicholas Mitchell");
         $john->setMobileNumber('07765150512');
 
+//        die($john->toJSON());
+
         // This means nick was killed
         $john->voteResult($nick, false, array(
             '07598935460' => false,
