@@ -134,6 +134,9 @@ class Person {
      */
     public function wake(Person $person = null)
     {
+        if ($this->isMe($person)) {
+            return;
+        }
         if (!is_null($person)) {
             $message = "OMG, {$person->getName()} has been found dead! There's blood and guts everywhere. Please discuss on who you think committed this insidious act of violence.";
         } else {
@@ -206,7 +209,7 @@ class Person {
     }
 
 
-    public function voteResult(Person $person, $wasKilled, Array $people)
+    public function voteResult(Person $victim, $wasKilled, Array $people)
     {
         //TODO: FIX THIS
         $message = '';
@@ -214,20 +217,23 @@ class Person {
         $didNotWatchToLynch = array();
         $contactNumbers = array();
 
-        foreach ($people as $mobile => $votedLynch) {
+        if (!$wasKilled) {
+            $message = 'The Lynching did not pass, discussion will continue...';
+        } elseif ($this->isMe($victim)) {
+            $victim->kill(self::KILL_BY_LYNCH);
+            return;
+        } else {
 
-            // If the person was not killed, let everyone know
-            // that the lynching did not pass.
-            if (!$wasKilled) {
-                $message = 'The Lynching did not pass, discussion will continue...';
-                $this->contactPerson($mobile, $message);
-                continue;
-            }
+        // If the person was not killed, let everyone know
+        // that the lynching did not pass.
+        foreach ($people as $mobile => $votedLynch) {
 
             $personData = $this->gameState->toPerson($mobile);
             $currentName = $personData->personState['name'];
 
-            if ($currentName == $person->getName()) continue;
+            if ($currentName == $victim->getName()) {
+                continue;
+            }
 
             if ($votedLynch) {
                 array_push($wantedToLynch, $currentName);
@@ -235,11 +241,11 @@ class Person {
                 array_push($didNotWatchToLynch, $currentName);
             }
 
-            $contactNumbers[] = $mobile;
-
         }
 
-        $message = $person->getName() . ' has been Lynched!' . "\n";
+        $message = 'Night fall is here, please go to sleep.';
+
+        $message .= $victim->getName() . ' has been Lynched!' . "\n";
 
         // Build the message
         if (!empty($wantedToLynch)) {
@@ -252,19 +258,9 @@ class Person {
             $message .= ' chose not to lynch. ';
         }
 
-        $message .= 'Night fall is here, please go to sleep.';
-
-        $this->bulkSendSms($contactNumbers, $message);
-
-    }
-
-    private function bulkSendSms(array $contactNumbers, $message)
-    {
-        foreach ($contactNumbers as $number)
-        {
-            $this->contactPerson($number, $message);
         }
-        return true;
+        $this->contactPerson($this->getMobileNumber(), $message);
+
     }
 
     /**
@@ -299,5 +295,14 @@ class Person {
         // when the person was saved as JSON.
         $this->personState = json_decode($jsonObjectAsString, true);
         return $this;
+    }
+
+    /**
+     * @param Person $person
+     * @return bool
+     */
+    public function isMe(Person $person)
+    {
+        return $person->getMobileNumber() == $this->getMobileNumber();
     }
 }

@@ -2,11 +2,6 @@
 
 namespace Werewolfsms;
 
-function same_person($a, $b)
-{
-    return $a->getMobileNumber() == $b->getMobileNumber();
-}
-
 class GameController
 {
     const NIGHT_WOLF = "NIGHT_WOLF";
@@ -56,7 +51,7 @@ class GameController
             {
                 return;
             }
-            if (!same_person($other, $victim))
+            if (!$other->isMe($victim))
             {
                 $agree = false;
             }
@@ -176,15 +171,15 @@ class GameController
 
     public function argument($who)
     {
-        if ($this->phase == self::DAY_ARG1 && same_person($who, $this->nominator))
+        if ($this->phase == self::DAY_ARG1 && $who->isMe($this->nominator))
         {
             $this->enterPhase(self::DAY_ARG2);
         }
-        else if ($this->phase == self::DAY_ARG2 && same_person($who, $this->seconder))
+        else if ($this->phase == self::DAY_ARG2 && $who->isMe($this->seconder))
         {
             $this->enterPhase(self::DAY_DEFEND);
         }
-        else if ($this->phase == self::DAY_DEFEND && same_person($who, $this->seconder))
+        else if ($this->phase == self::DAY_DEFEND && $who->isMe($this->seconder))
         {
             $this->enterPhase(self::DAY_VOTE);
         }
@@ -226,8 +221,8 @@ class GameController
             $this->resetVotes();
             foreach ($this->getLivingPeople() as $person)
             {
-                if (same_person($person, $this->accused)
-                    || same_person($person, $this->nominator))
+                if ($person->isMe($this->accused)
+                    || $person->isMe($this->nominator))
                 {
                     $person->askForSeconder($this->accused);
                 }
@@ -371,5 +366,11 @@ class GameController
             }
         }
         $this->enterPhase(self::NIGHT_WOLF);
+    }
+
+    public function resetGame()
+    {
+
+        $this->fromJSON(json_encode(array()));
     }
 }
