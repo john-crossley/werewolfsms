@@ -43,7 +43,7 @@ class Person {
         // Set some state values
         $this->personState->consciousness = self::AWAKE;
         $this->personState->alive = true;
-        $this->personState->role = self::VILLAGER;
+        $this->personState->role = null;
         $this->personState->name = 'VILLAGER_' . mt_rand(0, 99);
         $this->personState->mobileNumber = null;
 
