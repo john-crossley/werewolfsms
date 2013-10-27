@@ -25,7 +25,7 @@ class GameController
     private function resetVotes()
     {
         $this->votes = [];
-        foreach ($this->livePeople() as $person)
+        foreach ($this->getLivingPeople() as $person)
         {
             $this->votes[$person->getMobileNumber()] = null;
         }
@@ -92,7 +92,7 @@ class GameController
     *Argue
      */
 
-    protected function livePeople()
+    protected function getLivingPeople()
     {
         $alivePeople = [];
         foreach ($this->people as $person)
@@ -120,14 +120,14 @@ class GameController
         switch ($newphase)
         {
         case self::NIGHT_WOLF:
-            foreach ($this->livePeople() as $person)
+            foreach ($this->getLivingPeople() as $person)
             {
                 $person->sleep();
             }
             break;
 
         case self::DAY_DISCUSS:
-            foreach ($this->livePeople() as $person)
+            foreach ($this->getLivingPeople() as $person)
             {
                 if ($person->consciousness() == Person::AWAKE)
                     continue;
@@ -137,7 +137,7 @@ class GameController
 
         case self::DAY_NOMINATED:
             $this->resetVotes();
-            foreach ($this->livePeople() as $person)
+            foreach ($this->getLivingPeople() as $person)
             {
                 if (same_person($person, $this->accused)
                     || same_person($person, $this->nominator))
@@ -160,7 +160,7 @@ class GameController
             break;
 
         case self::DAY_VOTE:
-            foreach ($this->livePeople() as $person)
+            foreach ($this->getLivingPeople() as $person)
             {
                 $person->askForVote($this->accused);
             }
@@ -184,9 +184,23 @@ class GameController
     {
         $ar = json_decode($json, true);
         $this->people = $this->storage->getAllPeople();
+        $this->phase = $this->$ar["phase"];
         $this->moninator = $this->toPerson($ar["nominator"]);
         $this->seconder = $this->toPerson($ar["seconder"]);
         $this->accused = $this->toPerson($ar["accused"]);
+        $this->votes = $ar["votes"];
+    }
+
+    public function toJSON()
+    {
+        $ar = array(
+            "phase" => $this->phase,
+            "nominator" => $this->fromPerson($this->nominator),
+            "seconder" => $this->fromPerson($this->seconder),
+            "accused" => $this->fromPerson($this->accused),
+            "votes" => $this->votes
+        );
+        return json_encode($ar);
     }
 
     public function StartGame()

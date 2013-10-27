@@ -70,7 +70,7 @@ $app->get('/people', function() use ($clockwork) {
 $app->get('/people/alive', function() use ($clockwork) {
     $storage = new W\GameStorage($clockwork);
     $game = $storage->getGame();
-    $players = $game->getAlivePlayers();
+    $players = $game->getLivingPeople();
     echo json_encode($players);
 });
 
