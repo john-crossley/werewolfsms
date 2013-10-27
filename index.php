@@ -80,31 +80,9 @@ $app->get('/people/alive', function() use ($clockwork) {
 });
 
 $app->get('/cron', function () {
-    /*$storage = new W\GameStorage($clockwork);
+    $storage = new W\GameStorage($clockwork);
     $game = $storage->getGame();
-    $game->tick();*/
-    $serverstring = System::getConnectionString(ROOT . 'config.json');
-    $mongoDbConnection = new \MongoClient($serverstring);
-    $mongoDatabase = $mongoDbConnection->werewolfsms;
-    $aCollection = $mongoDatabase->cron;
-    $doc = $aCollection->findOne();
-    if ($doc == null) {
-        $doc['last_run'] = date('c');
-        $aCollection->insert($doc);
-    }
-    $doc = $aCollection->findOne();
-    $doc['last_run'] = date('c');
-    unset($doc['_id']);
-    $aCollection->findAndModify(null,$doc);
-    var_dump($doc);
-});
-
-$app->get('/lastcron', function() {
-    $serverstring = System::getConnectionString(ROOT . 'config.json');
-    $mongoDbConnection = new \MongoClient($serverstring);
-    $mongoDatabase = $mongoDbConnection->werewolfsms;
-    $aCollection = $mongoDatabase->cron;
-    var_dump($aCollection->findOne());
+    $game->tick();
 });
 
 $app->run();
