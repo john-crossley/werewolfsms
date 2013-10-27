@@ -312,14 +312,15 @@ class GameController
     {
         $ar = json_decode($json, true);
         $this->people = $this->storage->getAllPeople();
-        $this->phase = $ar["phase"];
-        $this->moninator = $this->toPerson($ar["nominator"]);
-        $this->seconder = $this->toPerson($ar["seconder"]);
-        $this->accused = $this->toPerson($ar["accused"]);
-        $this->victim = $this->toPerson($ar["victim"]);
-        $this->votes = $ar["votes"];
+        $this->phase = System::withDefault($ar, "phase", self::PREGAME);
+        $this->moninator = $this->toPerson(System::withDefault($ar, "nominator", null));
+        $this->seconder = $this->toPerson(System::withDefault($ar, "seconder", null));
+        $this->accused = $this->toPerson(System::withDefault($ar, "accused", null);
+        $this->victim = $this->toPerson(System::withDefault($ar, "victim", null));
+        $this->votes = System::withDefault($ar, "votes", null);
         $this->wolfVotes = [];
-        foreach ((array)$ar["wolfVotes"] as $wnum => $victim)
+        $wolfVotes = System::withDefault($ar, "wolfVotes", []);
+        foreach ($wolfVotes as $wnum => $victim)
         {
             $this->wolfVotes[$wnum] = $this->toPerson($victim);
         }

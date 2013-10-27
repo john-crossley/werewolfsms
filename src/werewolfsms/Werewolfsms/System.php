@@ -4,6 +4,18 @@ namespace Werewolfsms;
 
 class System {
 
+    public static function withDefault($ar, $key, $default)
+    {
+        if (array_key_exists($key, $ar))
+        {
+            return ar[$key];
+        }
+        else
+        {
+            return $default;
+        }
+    }
+
     public static function getApiKey($pathToFile)
     {
         $json = json_decode(file_get_contents($pathToFile));
