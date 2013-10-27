@@ -28,16 +28,14 @@ $app->get('/', function() {
 
 });
 
-$app->get('/people', function() {
-    $game = new W\GameController();
-    $game->loadState($jsonObject);
-    $players = $game->getCurrentPlayers();
-    echo json_encode($players);
+$app->get('/people', function() use ($clockwork) {
+    $storage = new W\GameStorage($clockwork);
+    echo json_encode($storage->getAllPeople());
 });
 
-$app->get('/people/alive', function() {
-    $game = new W\GameController();
-    $game->loadState($jsonObject);
+$app->get('/people/alive', function() use ($clockwork) {
+    $storage = new W\GameStorage($clockwork);
+    $game = $storage->getGame();
     $players = $game->getAlivePlayers();
     echo json_encode($players);
 });
