@@ -4,6 +4,7 @@ namespace Werewolfsms;
 
 class GameController
 {
+    const PRE_GAME = "PRE_GAME";
     const NIGHT_WOLF = "NIGHT_WOLF";
     const DAY_DISCUSS = "DAY_DISCUSS";
     const DAY_NOMINATED = "DAY_NOMINATED";
@@ -15,7 +16,7 @@ class GameController
     private $storage  = null;
     private $victim = null;
     private $people = [];
-    private $phase = null;
+    private $phase = self::PRE_GAME;
     private $nominator = null;
     private $seconder = null;
     private $accused = null;
@@ -112,7 +113,7 @@ class GameController
     {
         if (!is_null($this->accused))
         {
-            throw new \Exception($this->accused->friendlyName() . " has already been nominateed");
+            throw new \Exception($this->accused->getName() . " has already been nominateed");
         }
         $this->accused = $accused;
         $this->nominator = $who;
@@ -312,10 +313,10 @@ class GameController
     {
         $ar = json_decode($json, true);
         $this->people = $this->storage->getAllPeople();
-        $this->phase = System::withDefault($ar, "phase", self::PREGAME);
+        $this->phase = System::withDefault($ar, "phase", self::PRE_GAME);
         $this->moninator = $this->toPerson(System::withDefault($ar, "nominator", null));
         $this->seconder = $this->toPerson(System::withDefault($ar, "seconder", null));
-        $this->accused = $this->toPerson(System::withDefault($ar, "accused", null);
+        $this->accused = $this->toPerson(System::withDefault($ar, "accused", null));
         $this->victim = $this->toPerson(System::withDefault($ar, "victim", null));
         $this->votes = System::withDefault($ar, "votes", null);
         $this->wolfVotes = [];
@@ -380,7 +381,15 @@ class GameController
 
     public function resetGame()
     {
-
         $this->fromJSON(json_encode(array()));
+        foreach ($this->people as $person) {
+            $person->fromJSON(json_encode(array(
+                    'name' => $person->getName(),
+                    'mobileNumber' => $person->getMobileNumber(),
+                    'alive' => true,
+                    'role' => null
+                )
+            ));
+        }
     }
 }

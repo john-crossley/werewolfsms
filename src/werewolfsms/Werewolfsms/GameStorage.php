@@ -80,4 +80,11 @@ class GameStorage {
         $this->savePeople();
     }
 
+    public function resetDatabase()
+    {
+        $this->peopleCollection->remove();
+        $this->gameCollection->remove();
+        $this->currentGame = null;
+    }
+
 }
