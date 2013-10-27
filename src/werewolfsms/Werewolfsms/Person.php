@@ -38,14 +38,13 @@ class Person {
      */
     public function __construct(\Clockwork\Clockwork $smsObject, $gameState)
     {
-        $this->personState = new \stdClass();
+        $this->personState = array();
 
         // Set some state values
-        $this->personState->consciousness = self::AWAKE;
-        $this->personState->alive = true;
-        $this->personState->role = null;
-        $this->personState->name = 'VILLAGER_' . mt_rand(0, 99);
-        $this->personState->mobileNumber = null;
+        $this->personState['alive'] = true;
+        $this->personState['role'] = null;
+        $this->personState['name'] = null;
+        $this->personState['mobileNumber'] = null;
 
         // Set the sms object
         $this->smsObject = $smsObject;
@@ -71,13 +70,13 @@ class Person {
     public function setRole($role)
     {
         if (self::VILLAGER === $role) {
-            $this->personState->role = $role;
+            $this->personState['role'] = $role;
             $this->contactPerson($this->getMobileNumber(),
                 "You are a villager, night fall is upon us. Go to sleep!");
         }
 
         if (self::WEREWOLF === $role) {
-            $this->personState->role = $role;
+            $this->personState['role'] = $role;
         }
     }
 
@@ -87,7 +86,11 @@ class Person {
      */
     public function getName()
     {
-        return $this->personState->name;
+        if (array_key_exists('name',$this->personState)) {
+            return $this->personState['name'];
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -96,28 +99,9 @@ class Person {
      */
     public function setName($name)
     {
-        $this->personState->name = strip_tags($name);
+        $this->personState['name'] = strip_tags($name);
         $this->contactPerson($this->getMobileNumber(),
             'Hello ' . $name . ' and welcome to the game! Further instructions will follow...');
-    }
-
-    /**
-     * Gets the consciousness (state) of the person object.
-     * @return string The consciousness of the person object.
-     */
-    public function getConsciousness()
-    {
-        return $this->personState->consciousness;
-    }
-
-    public function setConsciousness($consciousness)
-    {
-        if (self::AWAKE === $consciousness || self::ASLEEP === $consciousness) {
-            // We can set the role.
-            $this->personState->consciousness = $consciousness;
-        } else {
-            throw new \Exception('Invalid consciousness has been supplied to the person object.');
-        }
     }
 
     /**
@@ -128,7 +112,7 @@ class Person {
     public function setMobileNumber($mobileNumber)
     {
         // Todo: Validate this mobile number
-        $this->personState->mobileNumber = $mobileNumber;
+        $this->personState['mobileNumber'] = $mobileNumber;
     }
 
     /**
@@ -137,16 +121,11 @@ class Person {
      */
     public function getMobileNumber()
     {
-        return $this->personState->mobileNumber;
-    }
-
-    /**
-     * Sets the consciousness of the person
-     * object to asleep.
-     */
-    public function sleep()
-    {
-        $this->setConsciousness(self::ASLEEP);
+        if (array_key_exists('mobilenumber',$this->personState)) {
+            return $this->personState['mobileNumber'];
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -203,8 +182,8 @@ class Person {
                 $message = 'For some reason you have decided to kill yourself!';
                 break;
         }
-        $this->personState->alive = false;
-        return $this->contactPerson($this, $message);
+        $this->personState['alive'] = false;
+        return $this->contactPerson($this->personState['mobileNumber'], $message);
     }
 
 
@@ -229,6 +208,7 @@ class Person {
 
     public function voteResult(Person $person, $wasKilled, Array $people)
     {
+        //TODO: FIX THIS
         $message = '';
         $wantedToLynch = array();
         $didNotWatchToLynch = array();
@@ -244,11 +224,8 @@ class Person {
                 continue;
             }
 
-            // $currentName = $this->gameState->toPerson($mobile)->personState->name;
-
             $personData = $this->gameState->toPerson($mobile);
-            $currentName = $personData->personState->name;
-            $personData->gameState->consciousness = self::ASLEEP;
+            $currentName = $personData->personState['name'];
 
             if ($currentName == $person->getName()) continue;
 
@@ -296,7 +273,7 @@ class Person {
      */
     public function isAlive()
     {
-        return ($this->personState->alive) ? true : false;
+        return $this->personState['alive'];
     }
 
     /**
@@ -304,7 +281,7 @@ class Person {
      */
     public function methodOfDeath()
     {
-        return $this->personState->deathBy;
+        return $this->personState['deathBy'];
     }
 
     /**
@@ -320,7 +297,7 @@ class Person {
     {
         // This will set the state of the person to what it was
         // when the person was saved as JSON.
-        $this->personState = json_decode($jsonObjectAsString);
+        $this->personState = json_decode($jsonObjectAsString, true);
         return $this;
     }
 }
