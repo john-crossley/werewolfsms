@@ -8,13 +8,13 @@ use Werewolfsms as W;
 $app = new Slim\Slim;
 
 $app->get('/join-game', function() use ($app) {
-    return $app->render('register', array(
+    return $app->render('joinnow.php', array(
         'title' => 'Join Game '
     ));
 });
 
 $app->post('/join-game', function() use ($app) {
-
+    
     var_dump($_POST);
 
 });
@@ -22,18 +22,28 @@ $app->post('/join-game', function() use ($app) {
 $app->get('/', function() use ($app) {
 
     return $app->render('index.php',array(
-        'title'=>'Were Wolve SMS'
+        'title'=>'Werewolf SMS'
     ));
 
 });
 
-$app->get('/godmode',function(){
+$app->get('/godmode',function()  use ($app){
     
-    return $app->render('godmode.php'{
-        'title'=>'God Mode'
-    });
+    return $app->render('godmode.php',array(
+        'title'=>'In GOD MODE!'
+    ));
 
 });
+
+
+$app->get('/learn-more',function()  use ($app){
+    
+    return $app->render('learnmore.php',array(
+        'title'=>'Learn More!'
+    ));
+
+});
+
 
 
 $app->get('/', function() {
