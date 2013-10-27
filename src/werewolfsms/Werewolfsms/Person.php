@@ -5,7 +5,8 @@ namespace Werewolfsms;
 use Clockwork\ClockworkException;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
-class Person {
+class Person
+{
 
     // Deaths
     const KILL_BY_LYNCH = 'kill_by_lynch';
@@ -29,7 +30,7 @@ class Person {
     // Stores the actual state
     // of the person object.
     public $personState,
-           $gameState;
+        $gameState;
 
     /**
      * The Person constructor - Is called when its the start of a new game.
@@ -86,7 +87,7 @@ class Person {
      */
     public function getName()
     {
-        if (array_key_exists('name',$this->personState)) {
+        if (array_key_exists('name', $this->personState)) {
             return $this->personState['name'];
         } else {
             return null;
@@ -121,7 +122,7 @@ class Person {
      */
     public function getMobileNumber()
     {
-        if (array_key_exists('mobilenumber',$this->personState)) {
+        if (array_key_exists('mobilenumber', $this->personState)) {
             return $this->personState['mobileNumber'];
         } else {
             return null;
@@ -192,7 +193,7 @@ class Person {
 
     public function askForReasoning($typeOfArgument, Person $person)
     {
-        switch($typeOfArgument) {
+        switch ($typeOfArgument) {
             case 'nominate':
                 $this->contactPerson($this->getMobileNumber(),
                     "Please present your reasons for nominating {$person->getName()}");
@@ -224,39 +225,39 @@ class Person {
             return;
         } else {
 
-        // If the person was not killed, let everyone know
-        // that the lynching did not pass.
-        foreach ($people as $mobile => $votedLynch) {
+            // If the person was not killed, let everyone know
+            // that the lynching did not pass.
+            foreach ($people as $mobile => $votedLynch) {
 
-            $personData = $this->gameState->toPerson($mobile);
-            $currentName = $personData->personState['name'];
+                $personData = $this->gameState->toPerson($mobile);
+                $currentName = $personData->personState['name'];
 
-            if ($currentName == $victim->getName()) {
-                continue;
+                if ($currentName == $victim->getName()) {
+                    continue;
+                }
+
+                if ($votedLynch) {
+                    array_push($wantedToLynch, $currentName);
+                } else {
+                    array_push($didNotWatchToLynch, $currentName);
+                }
+
             }
 
-            if ($votedLynch) {
-                array_push($wantedToLynch, $currentName);
-            } else {
-                array_push($didNotWatchToLynch, $currentName);
+            $message = 'Night fall is here, please go to sleep.';
+
+            $message .= $victim->getName() . ' has been Lynched!' . "\n";
+
+            // Build the message
+            if (!empty($wantedToLynch)) {
+                $message .= implode(', ', $wantedToLynch);
+                $message .= ' chose to lynch. ';
             }
 
-        }
-
-        $message = 'Night fall is here, please go to sleep.';
-
-        $message .= $victim->getName() . ' has been Lynched!' . "\n";
-
-        // Build the message
-        if (!empty($wantedToLynch)) {
-            $message .= implode(', ', $wantedToLynch);
-            $message .= ' chose to lynch. ';
-        }
-
-        if (!empty($didNotWatchToLynch)) {
-            $message .= implode(', ', $didNotWatchToLynch);
-            $message .= ' chose not to lynch. ';
-        }
+            if (!empty($didNotWatchToLynch)) {
+                $message .= implode(', ', $didNotWatchToLynch);
+                $message .= ' chose not to lynch. ';
+            }
 
         }
         $this->contactPerson($this->getMobileNumber(), $message);
