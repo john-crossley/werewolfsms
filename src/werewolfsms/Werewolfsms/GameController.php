@@ -17,8 +17,6 @@ class GameController
     const DAY_DEFEND = "DAY_DEFEND";
     const DAY_VOTE = "DAY_VOTE";
 
-    private $accused = null;
-    private $nominator = null;
     private $storage  = null;
     private $victim = null;
     private $people = [];
@@ -47,7 +45,7 @@ class GameController
     {
         $wnum = $who->getMobileNumber();
         if (array_key_exists($wnum, $this->wolfVotes))
-            throw Exception("You are not a wolf");
+            throw \Exception("You are not a wolf");
         $this->wolfVotes[$who->getMobileNumber()] = $victim;
         $agree = true;
         foreach ($this->wolfVotes as $other)
@@ -117,7 +115,7 @@ class GameController
     {
         if (!is_null($this->accused))
         {
-            throw new Exception($this->accused->friendlyName() . " has already been nominateed");
+            throw new \Exception($this->accused->friendlyName() . " has already been nominateed");
         }
         $this->accused = $accused;
         $this->nominator = $who;
@@ -168,10 +166,10 @@ class GameController
         {
             if ($person->isAlive() && $person->getRole() == Person::WEREWOLF)
             {
-                $alivePeople[] = $person;
+                $wolves[] = $person;
             }
         }
-        return $alivePeople;
+        return $wolves;
     }
 
     public function argument($who)
@@ -190,14 +188,17 @@ class GameController
         }
         else
         {
-            throw new Exception("Whu?");
+            throw new \Exception("Whu?");
         }
     }
 
-    public function enterPhase($newphase)
+    public function enterPhase($newPhase)
     {
-        assert($newphase != $this->phase);
-        switch ($newphase)
+        if ($newPhase != $this->phase)
+        {
+            throw \Exception("State machine borked");
+        }
+        switch ($newPhase)
         {
         case self::NIGHT_WOLF:
             $this->wolfVotes = [];
@@ -251,7 +252,7 @@ class GameController
             break;
 
         default:
-            abort();
+            throw \Exception("State machine borked");
         }
     }
 
@@ -335,11 +336,11 @@ class GameController
 
     public function startGame()
     {
-        $wolves = array_rand($this->getLivingPeople());
+        $wolves = array_rand($this->people);
 
         foreach ($wolves as $wnum)
         {
-            $this->setRole(Person::WEREWOLF);
+            $this->people[$wnum]->setRole(Person::WEREWOLF);
         }
         foreach ($this->getLivingPeople() as $person)
         {
