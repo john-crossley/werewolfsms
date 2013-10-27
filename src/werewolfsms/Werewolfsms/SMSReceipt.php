@@ -23,7 +23,8 @@ class SMSReceipt {
 
         switch (strtolower($keyword)) {
             case 'vote' :
-                list($intent, $spuriouscontent) = explode(' ',$restOfContent,2);
+                $hold = explode(' ',$restOfContent,2);
+                $intent = array_shift($hold);
                 $game->voteLynch($fromPerson,(strtolower($intent) != "save"));
                 break;
             case 'kill' :
@@ -37,7 +38,8 @@ class SMSReceipt {
                 $game->second($fromPerson);
                 break;
             case 'register' :
-                list($firstName, $spuriouscontent) = explode(' ',$restOfContent,2);
+                $hold  = explode(' ',$restOfContent,2);
+                $firstName = array_shift($hold);
                 $game->registerPerson($from,$firstName);
                 break;
             case 'start' :

@@ -26,10 +26,12 @@ class GameController
     private $accused = null;
     private $votes = [];
     private $wolfVotes = [];
+    private $smsObject = null;
 
-    public function __construct($storage)
+    public function __construct($storage, $smsObject)
     {
         $this->storage = $storage;
+        $this->smsObject = $smsObject;
     }
 
     private function resetVotes()
