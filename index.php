@@ -74,10 +74,18 @@ $app->get('/people/alive', function() use ($clockwork) {
     echo json_encode($players);
 });
 
-$app->get('/cron', function () {
+$app->get('/cron', function () use ($clockwork)  {
     $storage = new W\GameStorage($clockwork);
     $game = $storage->getGame();
     $game->tick();
+});
+
+$app->post('/sms', function() use ($clockwork,$app)  {
+    $handler = new W\SMSReceipt();
+    $storage = new W\GameStorage($clockwork);
+    $game = $storage->getGame();
+    $handler->processSMS($app, $game);
+
 });
 
 $app->run();
