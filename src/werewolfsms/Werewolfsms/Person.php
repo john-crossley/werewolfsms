@@ -45,6 +45,7 @@ class Person {
         $this->personState->alive = true;
         $this->personState->role = self::VILLAGER;
         $this->personState->name = 'VILLAGER_' . mt_rand(0, 99);
+        $this->personState->mobileNumber = null;
 
         // Set the sms object
         $this->smsObject = $smsObject;
@@ -93,6 +94,8 @@ class Person {
     public function setName($name)
     {
         $this->personState->name = strip_tags($name);
+        $this->contactPerson($this->getMobileNumber(),
+            'Hello ' . $name . ' and welcome to the game! Further instructions will follow...');
     }
 
     /**
@@ -238,7 +241,11 @@ class Person {
                 continue;
             }
 
-            $currentName = $this->gameState->toPerson($mobile)->personState->name;
+            // $currentName = $this->gameState->toPerson($mobile)->personState->name;
+
+            $personData = $this->gameState->toPerson($mobile);
+            $currentName = $personData->personState->name;
+            $personData->gameState->consciousness = self::ASLEEP;
 
             if ($currentName == $person->getName()) continue;
 
@@ -265,7 +272,9 @@ class Person {
             $message .= ' chose not to lynch. ';
         }
 
-         $this->bulkSendSms($contactNumbers, $message);
+        $message .= 'Night fall is here, please go to sleep.';
+
+        $this->bulkSendSms($contactNumbers, $message);
 
     }
 
