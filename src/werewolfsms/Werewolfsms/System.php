@@ -18,20 +18,20 @@ class System {
         if (!array_key_exists('password',$json)) { $json['password'] = ''; }
         if (!array_key_exists('port',$json)) { $json['port'] = ''; }
         $serverstring = 'mongodb://';
-        if (!empty($config['username'])) {
-            if (!empty($config['password'])) {
-                $serverstring .= $config['username'].':'.$config['password'].'@';
+        if (!empty($json['username'])) {
+            if (!empty($json['password'])) {
+                $serverstring .= $json['username'].':'.$json['password'].'@';
             } else {
-                $serverstring .= $config['username'].'@';
+                $serverstring .= $json['username'].'@';
             }
         }
-        if (!empty($config['host'])) {
-            $serverstring .= $config['host'];
+        if (!empty($json['host'])) {
+            $serverstring .= $json['host'];
         } else {
             $serverstring .= 'localhost';
         }
-        if (!empty($config['port'])) {
-            $serverstring .= ':'.$config['port'];
+        if (!empty($json['port'])) {
+            $serverstring .= ':'.$json['port'];
         }
         return $serverstring;
     }
