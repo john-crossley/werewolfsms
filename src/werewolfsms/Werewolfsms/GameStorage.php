@@ -50,8 +50,8 @@ class GameStorage {
         if (is_null($this->currentGame)) {
             $currentGame = new GameController($this);
             $currentGameJson = $this->gameCollection->findOne();
-            $currentGame->fromJSON($currentGameJson);
             $this->currentGame = $currentGame;
+            $currentGame->fromJSON($currentGameJson);
         }
         return $this->currentGame;
     }
