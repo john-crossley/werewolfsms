@@ -294,6 +294,15 @@ class GameController
         return $this->people[$val];
     }
 
+    public function fromPerson($person)
+    {
+        if (is_null($person))
+        {
+            return null;
+        }
+        return $this->getMobileNumber();
+    }
+
     public function tick()
     {
         /* tock */
