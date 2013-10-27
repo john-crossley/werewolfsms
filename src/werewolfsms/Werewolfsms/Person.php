@@ -227,35 +227,35 @@ class Person
             $message .= $victim->getName() . ' has been Lynched!' . "\n";
         }
 
-            // If the person was not killed, let everyone know
-            // that the lynching did not pass.
-            foreach ($people as $mobile => $playerVote) {
+        // If the person was not killed, let everyone know
+        // that the lynching did not pass.
+        foreach ($people as $mobile => $playerVote) {
 
-                $personData = $this->gameState->toPerson($mobile);
-                $currentName = $personData->personState['name'];
+            $personData = $this->gameState->toPerson($mobile);
+            $currentName = $personData->personState['name'];
 
-                if ($victim->isMe($personData)) {
-                    continue;
-                }
-
-                if ($playerVote) {
-                    array_push($wantedToLynch, $currentName);
-                } else {
-                    array_push($didNotWantToLynch, $currentName);
-                }
-
+            if ($victim->isMe($personData)) {
+                continue;
             }
 
-            // Build the message
-            if (!empty($wantedToLynch)) {
-                $message .= implode(', ', $wantedToLynch);
-                $message .= ' chose to lynch. ';
+            if ($playerVote) {
+                array_push($wantedToLynch, $currentName);
+            } else {
+                array_push($didNotWantToLynch, $currentName);
             }
 
-            if (!empty($didNotWantToLynch)) {
-                $message .= implode(', ', $didNotWantToLynch);
-                $message .= ' chose not to lynch. ';
-            }
+        }
+
+        // Build the message
+        if (!empty($wantedToLynch)) {
+            $message .= implode(', ', $wantedToLynch);
+            $message .= ' chose to lynch. ';
+        }
+
+        if (!empty($didNotWantToLynch)) {
+            $message .= implode(', ', $didNotWantToLynch);
+            $message .= ' chose not to lynch. ';
+        }
 
         $this->contactPerson($this->getMobileNumber(), $message);
 
