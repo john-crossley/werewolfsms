@@ -44,7 +44,7 @@ class Person {
         $this->personState->consciousness = self::AWAKE;
         $this->personState->alive = true;
         $this->personState->role = self::VILLAGER;
-        $this->personState->name = 'VILLAGER ' . mt_rand(0, 99);
+        $this->personState->name = 'VILLAGER_' . mt_rand(0, 99);
 
         // Set the sms object
         $this->smsObject = $smsObject;
