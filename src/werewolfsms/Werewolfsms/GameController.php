@@ -2,40 +2,87 @@
 
 namespace Werewolfsms;
 
-static function same_person($a, $b)
+function same_person($a, $b)
 {
-    return $a->uniqueID() == $b->uniqueID();
+    return $a->getMobileNumber() == $b->getMobileNumber();
 }
 
-class GameController {
+class GameController
+{
+    const NIGHT_WOLF = "NIGHT_WOLF"
+    const DAY_DISCUSS = "DAY_DISCUSS";
+    const DAY_NOMINATED = "DAY_NOMINATED";
+    const DAY_ARG1 = "DAY_ARG1";
+    const DAY_ARG2 = "DAY_ARG2";
+    const DAY_DEFEND = "DAY_DEFEND";
+    const DAY_VOTE = "DAY_VOTE";
+
+    public __constructor($storage)
+    {
+        $this->storage = $storage;
+    }
+
+    private function resetVotes()
+    {
+        $this->votes = [];
+        foreach ($this.livePeople() as $person)
+        {
+            $this->votes[$person.getMobileNumber()] = null;
+        }
+    }
+
     public function Vote($who, $guilty)
     {
-	$this->votes[$who] = $guilty
+        $yes = 0;
+        $no = 0;
+        $this->votes[$who] = $guilty;
+        foreach ($this->votes as $vote)
+        {
+            if (is_null($vote))
+                return;
+            if ($vote)
+            {
+                $yes += 1;
+            }
+            else
+            {
+                $no += 1;
+            }
+        }
+        if ($yes == $no && mt_rand(0, 1) == 0)
+        {
+            $yes += 1;
+        }
+        $this->voteResult($this->accused, $yes > $no, $this->votes);
+        $this->enterPhase(self::NIGHT_WOLF);
     }
-    # Return true if nomination was accepted
-    public function Nominate($who, $accused)
-    {
-	if (is_null($this->accused))
-	{
-	  return false;
-	}
-	$this->accused = accused;
-	$this->enterPhase($this->DAY_NOMINATED);
-	return true;
-    }
-    # Return true if seconding was accepted
-    public function Second($who, $accused)
 
-    /*
-    enum game_phases {
-      NIGHT_WOLF
-      DAY_DISCUSS
-      DAY_NOMINATED
-      DAY_ARG1
-      DAY_ARG2
-      DAY_DEFEND
-      DAY_VOTE
+    public function nominate($who, $accused)
+    {
+        if (!is_null($this->accused))
+        {
+            throw new Exception($this->accused->friendlyName() . " has already been nominateed");
+        }
+        $this->accused = accused;
+        $this->nominator = $who;
+        $this->enterPhase(self::DAY_NOMINATED);
     }
+
+    public function second($who, $accused)
+    {
+        if (is_null($this->accused))
+        {
+            throw new Exception($who->friendlyName() . " has not been nominated");
+        }
+        if (!is_null($this->seconder))
+        {
+            throw new Exception($this->accused->friendlyName() . " has already been seconded");
+        }
+        $this->seconder = $who;
+        $this->enterPhase(self::DAY_ARG1);
+    }
+
+    /* Person API???
     Sleep
     Wake
     AskForSeconder(Person)
@@ -45,17 +92,26 @@ class GameController {
     *Argue
      */
 
-    protected livePeople()
+    protected function livePeople()
     {
-	$alivePeople = [];
-	foreach ($this->people as $person)
-	{
-	    if ($person.isAlive())
-	    {
-		$alivePeople[] = $person;
-	    }
-	}
-	return $alivePeople;
+        $alivePeople = [];
+        foreach ($this->people as $person)
+        {
+            if ($person.isAlive())
+            {
+                $alivePeople[] = $person;
+            }
+        }
+        return $alivePeople;
+    }
+
+    public function argument($who)
+    {
+        if ($this->phase == self::DAY_ARG1 && same_person($who, $this->nominator))
+        {
+            $this->enterPhase
+        }
+        throw Exception("Whu?")
     }
 
     public function enterPhase($newphase)
@@ -63,23 +119,24 @@ class GameController {
         assert($newphase != $this->phase);
         switch ($newphase)
         {
-        case "NIGHT_WOLF":
+        case self::NIGHT_WOLF:
             foreach ($this->livePeople() as $person)
             {
                 $person->sleep();
             }
             break;
 
-        case "DAY_DISCUSS":
+        case self::DAY_DISCUSS:
             foreach ($this->livePeople() as $person)
             {
-		if ($person->consciousness() == Person::AWAKE)
-		    continue;
+                if ($person->consciousness() == Person::AWAKE)
+                    continue;
                 $person->wake($this->killed);
             }
             break;
 
-        case "DAY_NOMINATED":
+        case self::DAY_NOMINATED:
+            $this->resetVotes();
             foreach ($this->livePeople() as $person)
             {
                 if (same_person($person, $this->accused)
@@ -90,35 +147,46 @@ class GameController {
             }
             break;
 
-        case "DAY_ARG1":
-            $this->nominator->argue(Person::NOMINATE);
+        case self::DAY_ARG1:
+            $this->nominator->askForArgument(Person::NOMINATE);
             break;
 
-        case "DAY_ARG2":
-            $this->nominator->argue(Person::SECOND);
+        case self::DAY_ARG2:
+            $this->nominator->askForArgument(Person::SECOND);
             break;
 
-        case "DAY_DEFEND":
-            $this->nominator->argue(Person::DEFEND);
+        case self::DAY_DEFEND:
+            $this->nominator->askForArgument(Person::DEFEND);
             break;
 
-	case "DAY_VOTE":
+        case self::DAY_VOTE:
             foreach ($this->livePeople() as $person)
             {
-		$person->vote($this->accused);
+                $person->askForVote($this->accused);
             }
-	    break;
+            break;
 
         default:
             abort();
         }
     }
-    public function Serialise()
+
+    public function toPerson($val)
     {
-	maybe_person(nominater);
-	maybe_person(seconder);
-	maybe_person(accused);
-	game_phase(phase);
+        if (is_null($val))
+        {
+            return null;
+        }
+        return $this->people[$val];
+    }
+
+    public function fromJSON($json)
+    {
+        ar = decode_json($json, true);
+        $this->people = $this->storage->getAllPeople()
+        $this->moninator = $this->toPerson(ar["nominator"])
+        $this->seconder = $this->toPerson(ar["seconder"])
+        $this->accused = $this->toPerson(ar["accused"])
     }
 
     public function StartGame()
